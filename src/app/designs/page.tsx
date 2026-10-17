@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
+import { DesignCard } from "@/components/DesignCard";
 import type { Design, DesignCategory } from "@/types/db";
 
 const categories: { value: DesignCategory | "all"; label: string }[] = [
@@ -28,18 +29,18 @@ export default async function DesignsPage({
   return (
     <>
       <SiteNav />
-      <main className="flex-1 mx-auto max-w-5xl px-6 py-12 w-full">
+      <main className="flex-1 mx-auto max-w-6xl px-6 py-12 w-full">
         <h1 className="font-serif text-3xl mb-6">Lookbook</h1>
 
-        <div className="flex gap-3 mb-8 flex-wrap">
+        <div className="flex gap-3 mb-10 flex-wrap">
           {categories.map((c) => (
             <Link
               key={c.value}
               href={c.value === "all" ? "/designs" : `/designs?category=${c.value}`}
-              className={`rounded-full px-4 py-1.5 text-sm border ${
+              className={`rounded-full px-4 py-1.5 text-sm border transition ${
                 (category ?? "all") === c.value
                   ? "bg-accent text-white border-accent"
-                  : "border-accent-soft"
+                  : "border-accent-soft hover:border-accent"
               }`}
             >
               {c.label}
@@ -47,24 +48,9 @@ export default async function DesignsPage({
           ))}
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-          {((designs ?? []) as Design[]).map((d) => (
-            <Link key={d.id} href={`/designs/${d.id}`} className="group block">
-              <div className="aspect-[3/4] overflow-hidden rounded-lg bg-accent-soft">
-                {d.cover_photo_url && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={d.cover_photo_url}
-                    alt={d.title}
-                    className="h-full w-full object-cover transition group-hover:scale-105"
-                  />
-                )}
-              </div>
-              <p className="mt-2 text-sm">{d.title}</p>
-              <p className="text-xs text-foreground/60">
-                From ₦{d.labour_price.toLocaleString()}
-              </p>
-            </Link>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          {((designs ?? []) as Design[]).map((d, i) => (
+            <DesignCard key={d.id} design={d} index={i} />
           ))}
           {(!designs || designs.length === 0) && (
             <p className="text-foreground/60 col-span-full">

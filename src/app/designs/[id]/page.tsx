@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { whatsappOrderLink } from "@/lib/whatsapp";
+import { FadeIn } from "@/components/FadeIn";
 import type { Design } from "@/types/db";
 
 export default async function DesignDetailPage({
@@ -24,17 +25,18 @@ export default async function DesignDetailPage({
       <main className="flex-1 mx-auto max-w-5xl px-6 py-12 w-full grid md:grid-cols-2 gap-10">
         <div className="space-y-3">
           {photos.map((url, i) => (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              key={i}
-              src={url as string}
-              alt={`${design.title} photo ${i + 1}`}
-              className="w-full rounded-lg object-cover"
-            />
+            <FadeIn key={i} delay={i * 0.1}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={url as string}
+                alt={`${design.title} photo ${i + 1}`}
+                className="w-full rounded-lg object-cover"
+              />
+            </FadeIn>
           ))}
         </div>
 
-        <div>
+        <FadeIn delay={0.15}>
           <p className="text-xs uppercase tracking-wide text-accent">
             {design.category.replace("_", "-")}
           </p>
@@ -63,7 +65,7 @@ export default async function DesignDetailPage({
               Ask a quick question on WhatsApp
             </a>
           </div>
-        </div>
+        </FadeIn>
       </main>
       <SiteFooter />
     </>

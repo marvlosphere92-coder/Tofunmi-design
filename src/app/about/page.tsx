@@ -1,4 +1,5 @@
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
+import { FadeIn } from "@/components/FadeIn";
 
 export default function AboutPage() {
   return (
@@ -19,46 +20,50 @@ export default function AboutPage() {
           </div>
         </div>
 
-        <section className="mx-auto max-w-2xl px-6 py-16 space-y-4">
-          <p className="text-foreground/80 text-lg leading-relaxed">
-            Every order is sewn personally, start to finish — no factory, no
-            shortcuts. Fabric is cut by hand, fitted to your exact
-            measurements, and finished with the kind of detail that only
-            comes from one person seeing a piece through from sketch to
-            final stitch.
-          </p>
-          <p className="text-foreground/70 leading-relaxed">
-            That&apos;s also why capacity is limited: a handful of pieces at
-            a time, made properly, rather than many made in a rush.
-          </p>
-        </section>
+        <FadeIn>
+          <section className="mx-auto max-w-2xl px-6 py-16 space-y-4">
+            <p className="text-foreground/80 text-lg leading-relaxed">
+              Every order is sewn personally, start to finish — no factory, no
+              shortcuts. Fabric is cut by hand, fitted to your exact
+              measurements, and finished with the kind of detail that only
+              comes from one person seeing a piece through from sketch to
+              final stitch.
+            </p>
+            <p className="text-foreground/70 leading-relaxed">
+              That&apos;s also why capacity is limited: a handful of pieces at
+              a time, made properly, rather than many made in a rush.
+            </p>
+          </section>
+        </FadeIn>
 
-        <section id="faq" className="mx-auto max-w-2xl px-6 pb-20">
-          <h2 className="font-serif text-2xl mb-6">FAQ</h2>
-          <div className="space-y-6 text-sm">
-            <div>
-              <p className="font-medium">How does payment work?</p>
-              <p className="text-foreground/70">
-                A deposit secures your order once details are confirmed on
-                WhatsApp; balance is due at fitting or pickup.
-              </p>
+        <FadeIn>
+          <section id="faq" className="mx-auto max-w-2xl px-6 pb-20">
+            <h2 className="font-serif text-2xl mb-6">FAQ</h2>
+            <div className="space-y-6 text-sm">
+              <div>
+                <p className="font-medium">How does payment work?</p>
+                <p className="text-foreground/70">
+                  A deposit secures your order once details are confirmed on
+                  WhatsApp; balance is due at fitting or pickup.
+                </p>
+              </div>
+              <div>
+                <p className="font-medium">Can I bring my own fabric?</p>
+                <p className="text-foreground/70">
+                  Yes — select &quot;I&apos;ll bring my own fabric&quot; on the
+                  order form and only the labour price applies.
+                </p>
+              </div>
+              <div>
+                <p className="font-medium">How long does an order take?</p>
+                <p className="text-foreground/70">
+                  Typical turnaround is 2–3 weeks depending on the piece and
+                  current bookings.
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="font-medium">Can I bring my own fabric?</p>
-              <p className="text-foreground/70">
-                Yes — select &quot;I&apos;ll bring my own fabric&quot; on the
-                order form and only the labour price applies.
-              </p>
-            </div>
-            <div>
-              <p className="font-medium">How long does an order take?</p>
-              <p className="text-foreground/70">
-                Typical turnaround is 2–3 weeks depending on the piece and
-                current bookings.
-              </p>
-            </div>
-          </div>
-        </section>
+          </section>
+        </FadeIn>
       </main>
       <SiteFooter />
     </>
