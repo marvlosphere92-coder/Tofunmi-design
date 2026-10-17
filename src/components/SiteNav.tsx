@@ -9,8 +9,8 @@ export function SiteNav() {
         </Link>
         <div className="flex gap-6 text-sm">
           <Link href="/designs">Lookbook</Link>
-          <Link href="/#about">About</Link>
-          <Link href="/#faq">FAQ</Link>
+          <Link href="/about">About</Link>
+          <Link href="/about#faq">FAQ</Link>
         </div>
       </nav>
     </header>

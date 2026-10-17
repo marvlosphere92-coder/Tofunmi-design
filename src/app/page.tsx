@@ -12,7 +12,7 @@ export default async function Home() {
       .select("*")
       .eq("active", true)
       .order("created_at", { ascending: false })
-      .limit(6),
+      .limit(8),
     supabase.from("capacity_settings").select("*").single(),
   ]);
 
@@ -23,44 +23,42 @@ export default async function Home() {
     <>
       <SiteNav />
       <main className="flex-1">
-        <section className="mx-auto max-w-5xl px-6 py-20 text-center">
-          <h1 className="font-serif text-5xl leading-tight">
-            Bespoke fashion,
-            <br /> made just for you
-          </h1>
-          <p className="mt-4 text-foreground/70 max-w-xl mx-auto">
-            Every piece is cut, sewn, and finished by hand. Browse the
-            lookbook, then send your order straight to WhatsApp.
-          </p>
-
-          {cap && !cap.accepting_orders ? (
-            <div className="mt-6 inline-block rounded-full bg-accent-soft px-5 py-2 text-sm">
-              Currently fully booked
-              {cap.booked_until
-                ? ` until ${new Date(cap.booked_until).toLocaleDateString()}`
-                : ""}
-              . <Link href="/waitlist" className="underline">Join the waitlist</Link>
-            </div>
-          ) : (
+        <div className="relative h-[82vh] min-h-[480px] overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="https://images.unsplash.com/photo-1492175742197-ed20dc5a6bed?auto=format&fit=crop&w=2000&q=80"
+            alt="A bride in a flowing gown, lit by soft window light"
+            className="h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-black/20" />
+          <div className="absolute inset-0 flex flex-col items-center justify-end text-center px-6 pb-16">
+            <h1 className="font-serif text-5xl md:text-6xl text-white leading-tight">
+              Bespoke fashion,
+              <br /> made just for you
+            </h1>
             <Link
               href="/designs"
-              className="mt-6 inline-block rounded-full bg-accent px-8 py-3 text-white"
+              className="mt-8 inline-block rounded-full bg-white/95 text-foreground px-8 py-3 hover:bg-white transition"
             >
               View the Lookbook
             </Link>
-          )}
-        </section>
+            {cap && !cap.accepting_orders && (
+              <p className="mt-4 text-sm text-white/90">
+                Currently fully booked
+                {cap.booked_until
+                  ? ` until ${new Date(cap.booked_until).toLocaleDateString()}`
+                  : ""}
+                . <Link href="/waitlist" className="underline">Join the waitlist</Link>
+              </p>
+            )}
+          </div>
+        </div>
 
         {featured.length > 0 && (
-          <section className="mx-auto max-w-5xl px-6 pb-20">
-            <h2 className="font-serif text-2xl mb-6">Recent pieces</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <section className="mx-auto max-w-6xl px-6 py-16">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {featured.map((d) => (
-                <Link
-                  key={d.id}
-                  href={`/designs/${d.id}`}
-                  className="group block"
-                >
+                <Link key={d.id} href={`/designs/${d.id}`} className="group block">
                   <div className="aspect-[3/4] overflow-hidden rounded-lg bg-accent-soft">
                     {d.cover_photo_url && (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -78,44 +76,13 @@ export default async function Home() {
                 </Link>
               ))}
             </div>
+            <div className="text-center mt-10">
+              <Link href="/designs" className="text-sm underline">
+                See the full lookbook
+              </Link>
+            </div>
           </section>
         )}
-
-        <section id="about" className="mx-auto max-w-3xl px-6 py-16 text-center">
-          <h2 className="font-serif text-2xl mb-4">About the designer</h2>
-          <p className="text-foreground/70">
-            Every order is sewn personally, start to finish — no factory, no
-            shortcuts. That&apos;s why capacity is limited and pieces are made
-            to measure.
-          </p>
-        </section>
-
-        <section id="faq" className="mx-auto max-w-3xl px-6 py-16">
-          <h2 className="font-serif text-2xl mb-6 text-center">FAQ</h2>
-          <div className="space-y-6 text-sm">
-            <div>
-              <p className="font-medium">How does payment work?</p>
-              <p className="text-foreground/70">
-                A deposit secures your order once details are confirmed on
-                WhatsApp; balance is due at fitting or pickup.
-              </p>
-            </div>
-            <div>
-              <p className="font-medium">Can I bring my own fabric?</p>
-              <p className="text-foreground/70">
-                Yes — select &quot;I&apos;ll bring my own fabric&quot; on the
-                order form and only the labour price applies.
-              </p>
-            </div>
-            <div>
-              <p className="font-medium">How long does an order take?</p>
-              <p className="text-foreground/70">
-                Typical turnaround is 2–3 weeks depending on the piece and
-                current bookings.
-              </p>
-            </div>
-          </div>
-        </section>
       </main>
       <SiteFooter />
     </>
