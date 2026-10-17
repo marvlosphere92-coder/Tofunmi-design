@@ -146,6 +146,23 @@ create policy "public can read design_materials" on design_materials
 create policy "public can read capacity" on capacity_settings
   for select using (true);
 
--- No public policies on clients, measurements, orders, order_status_events,
--- or waitlist_entries: those are only ever written/read via the service-role
--- client inside server actions, never directly from the browser.
+-- Writes to clients, measurements, orders, order_status_events, and
+-- waitlist_entries only ever happen via the service-role client inside
+-- server actions, never directly from the browser. But the admin dashboard
+-- reads them as a logged-in Supabase Auth user (anon-key client, subject to
+-- RLS), so grant read access to any authenticated session. There's only
+-- ever one admin account, so "authenticated" is an adequate proxy for "her".
+create policy "authenticated can read clients" on clients
+  for select using (auth.role() = 'authenticated');
+
+create policy "authenticated can read measurements" on measurements
+  for select using (auth.role() = 'authenticated');
+
+create policy "authenticated can read orders" on orders
+  for select using (auth.role() = 'authenticated');
+
+create policy "authenticated can read order_status_events" on order_status_events
+  for select using (auth.role() = 'authenticated');
+
+create policy "authenticated can read waitlist_entries" on waitlist_entries
+  for select using (auth.role() = 'authenticated');
