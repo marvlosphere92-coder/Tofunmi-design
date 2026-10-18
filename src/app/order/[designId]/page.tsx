@@ -117,7 +117,11 @@ export default async function OrderPage({
 
           <fieldset className="space-y-3">
             <legend className="font-medium">Event details</legend>
+            <label className="block text-sm text-foreground/70" htmlFor="eventDate">
+              When do you need to wear this? (wedding date, owambe, etc. — not a delivery date)
+            </label>
             <input
+              id="eventDate"
               name="eventDate"
               type="date"
               className="w-full rounded-md border border-accent-soft px-3 py-2"

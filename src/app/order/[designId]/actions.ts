@@ -104,13 +104,19 @@ export async function submitOrder(formData: FormData) {
     .insert({ order_id: order.id, status: "requested" });
 
   if (email) {
+    const base =
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
     await sendOrderStatusEmail({
       to: email,
       clientName: fullName,
       orderReference: reference,
       status: "requested — we'll confirm details on WhatsApp shortly",
+      manageUrl: `${base}/order/manage/${order.id}`,
     });
   }
 
-  redirect(`/order/confirmation?ref=${reference}&name=${encodeURIComponent(fullName)}`);
+  redirect(
+    `/order/confirmation?ref=${reference}&name=${encodeURIComponent(fullName)}&id=${order.id}`
+  );
 }

@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { updateOrderStatus } from "./actions";
+import { updateOrderStatus, updateOrderDetails } from "./actions";
 
 const statuses = [
   "requested",
@@ -17,7 +17,9 @@ export default async function AdminOrdersPage() {
   const supabase = await createClient();
   const { data: orders } = await supabase
     .from("orders")
-    .select("id, reference, status, event_date, created_at, clients(full_name, phone), designs(title)")
+    .select(
+      "id, reference, status, event_date, budget_note, created_at, clients(full_name, phone), designs(title)"
+    )
     .order("created_at", { ascending: false });
 
   return (
@@ -28,34 +30,63 @@ export default async function AdminOrdersPage() {
           const client = o.clients as unknown as { full_name: string; phone: string } | null;
           const design = o.designs as unknown as { title: string } | null;
           return (
-            <div
-              key={o.id}
-              className="rounded-lg border border-accent-soft p-4 flex flex-wrap items-center justify-between gap-3"
-            >
-              <div>
-                <p className="font-medium">
-                  {o.reference} — {client?.full_name ?? "Unknown"}
-                </p>
-                <p className="text-sm text-foreground/60">
-                  {design?.title ?? "—"} · {client?.phone}
-                  {o.event_date ? ` · event ${o.event_date}` : ""}
-                </p>
+            <div key={o.id} className="rounded-lg border border-accent-soft p-4 space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p className="font-medium">
+                    {o.reference} — {client?.full_name ?? "Unknown"}
+                  </p>
+                  <p className="text-sm text-foreground/60">
+                    {design?.title ?? "—"} · {client?.phone}
+                  </p>
+                </div>
+                <form action={updateOrderStatus} className="flex items-center gap-2">
+                  <input type="hidden" name="orderId" value={o.id} />
+                  <select
+                    name="status"
+                    defaultValue={o.status}
+                    className="rounded-md border border-accent-soft px-2 py-1 text-sm"
+                  >
+                    {statuses.map((s) => (
+                      <option key={s} value={s}>
+                        {s.replace(/_/g, " ")}
+                      </option>
+                    ))}
+                  </select>
+                  <button type="submit" className="rounded-full bg-accent text-white px-4 py-1 text-sm">
+                    Update status
+                  </button>
+                </form>
               </div>
-              <form action={updateOrderStatus} className="flex items-center gap-2">
+
+              <form
+                action={updateOrderDetails}
+                className="flex flex-wrap items-end gap-2 border-t border-accent-soft pt-3"
+              >
                 <input type="hidden" name="orderId" value={o.id} />
-                <select
-                  name="status"
-                  defaultValue={o.status}
-                  className="rounded-md border border-accent-soft px-2 py-1 text-sm"
+                <label className="text-xs text-foreground/60">
+                  Event date
+                  <input
+                    type="date"
+                    name="eventDate"
+                    defaultValue={o.event_date ?? ""}
+                    className="block rounded-md border border-accent-soft px-2 py-1 text-sm mt-1"
+                  />
+                </label>
+                <label className="text-xs text-foreground/60 flex-1 min-w-[180px]">
+                  Notes
+                  <input
+                    type="text"
+                    name="budgetNote"
+                    defaultValue={o.budget_note ?? ""}
+                    className="block w-full rounded-md border border-accent-soft px-2 py-1 text-sm mt-1"
+                  />
+                </label>
+                <button
+                  type="submit"
+                  className="rounded-full border border-accent-soft px-4 py-1 text-sm"
                 >
-                  {statuses.map((s) => (
-                    <option key={s} value={s}>
-                      {s.replace(/_/g, " ")}
-                    </option>
-                  ))}
-                </select>
-                <button type="submit" className="rounded-full bg-accent text-white px-4 py-1 text-sm">
-                  Update
+                  Save details
                 </button>
               </form>
             </div>

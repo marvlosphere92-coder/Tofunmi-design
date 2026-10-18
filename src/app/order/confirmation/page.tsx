@@ -4,9 +4,9 @@ import { SiteNav, SiteFooter } from "@/components/SiteNav";
 export default async function OrderConfirmationPage({
   searchParams,
 }: {
-  searchParams: Promise<{ ref?: string; name?: string }>;
+  searchParams: Promise<{ ref?: string; name?: string; id?: string }>;
 }) {
-  const { ref, name } = await searchParams;
+  const { ref, name, id } = await searchParams;
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
   const text = encodeURIComponent(
     `Hi, I just sent an order request (${ref ?? ""}) on the website. My name is ${name ?? ""}.`
@@ -29,6 +29,13 @@ export default async function OrderConfirmationPage({
         >
           Message her on WhatsApp now
         </a>
+        {id && (
+          <div className="mt-4">
+            <Link href={`/order/manage/${id}`} className="text-sm underline">
+              Need to change your event date or notes? Manage your order
+            </Link>
+          </div>
+        )}
         <div className="mt-6">
           <Link href="/designs" className="text-sm underline">
             Back to the lookbook
