@@ -32,9 +32,9 @@ export default async function Home() {
         <div className="relative h-[82vh] min-h-[480px] overflow-hidden">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="https://images.unsplash.com/photo-1618998584360-10a0c28eec0f?auto=format&fit=crop&w=2000&q=80"
-            alt="A bride in a traditional coral-bead headdress and beaded jewelry"
-            className="h-full w-full object-cover object-top"
+            src="https://images.unsplash.com/photo-1682904119073-aaf8ce0cf132?auto=format&fit=crop&w=2000&q=80"
+            alt="A bride in a flowing white embroidered traditional gown"
+            className="h-full w-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-black/20" />
           <HeroReveal
