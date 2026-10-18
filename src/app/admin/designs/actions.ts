@@ -2,7 +2,6 @@
 
 import { revalidatePath } from "next/cache";
 import { createServiceClient } from "@/lib/supabase/server";
-import type { DesignCategory } from "@/types/db";
 
 async function nextReference(supabase: ReturnType<typeof createServiceClient>) {
   const { count } = await supabase.from("designs").select("*", { count: "exact", head: true });
@@ -30,17 +29,19 @@ export async function createDesign(formData: FormData) {
 
   const reference = await nextReference(supabase);
   const displayOrder = await nextDisplayOrder(supabase);
-  const coverPhotoUrl = String(formData.get("coverPhotoUrl") || "") || null;
+  const photos = formData.getAll("photoUrls").map(String).filter(Boolean);
+  const videos = formData.getAll("videoUrls").map(String).filter(Boolean);
 
   await supabase.from("designs").insert({
     reference,
     title: String(formData.get("title") || ""),
-    category: String(formData.get("category") || "other") as DesignCategory,
+    category: String(formData.get("category") || "").trim() || "Other",
     description: String(formData.get("description") || "") || null,
     labour_price: formData.get("labourPrice") ? Number(formData.get("labourPrice")) : null,
     estimated_yards: formData.get("estimatedYards") ? Number(formData.get("estimatedYards")) : null,
-    cover_photo_url: coverPhotoUrl,
-    photos: coverPhotoUrl ? [coverPhotoUrl] : [],
+    cover_photo_url: photos[0] ?? null,
+    photos,
+    videos,
     active: true,
     display_order: displayOrder,
   });
@@ -88,18 +89,20 @@ export async function moveDesign(formData: FormData) {
 export async function updateDesign(formData: FormData) {
   const supabase = createServiceClient();
   const id = String(formData.get("designId"));
-  const coverPhotoUrl = String(formData.get("coverPhotoUrl") || "") || null;
+  const photos = formData.getAll("photoUrls").map(String).filter(Boolean);
+  const videos = formData.getAll("videoUrls").map(String).filter(Boolean);
 
   await supabase
     .from("designs")
     .update({
       title: String(formData.get("title") || ""),
-      category: String(formData.get("category") || "other") as DesignCategory,
+      category: String(formData.get("category") || "").trim() || "Other",
       description: String(formData.get("description") || "") || null,
       labour_price: formData.get("labourPrice") ? Number(formData.get("labourPrice")) : null,
       estimated_yards: formData.get("estimatedYards") ? Number(formData.get("estimatedYards")) : null,
-      cover_photo_url: coverPhotoUrl,
-      photos: coverPhotoUrl ? [coverPhotoUrl] : [],
+      cover_photo_url: photos[0] ?? null,
+      photos,
+      videos,
     })
     .eq("id", id);
 
@@ -119,7 +122,7 @@ export async function createDraftDesigns(formData: FormData) {
   const rows = urls.map((url, i) => ({
     reference: `MS-${String(refNum + i).padStart(4, "0")}`,
     title: "Untitled design",
-    category: "other" as DesignCategory,
+    category: "Other",
     cover_photo_url: url,
     photos: [url],
     active: false, // draft: hidden until she fills in the details

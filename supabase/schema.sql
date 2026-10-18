@@ -49,12 +49,13 @@ create table designs (
   id uuid primary key default gen_random_uuid(),
   reference text not null unique, -- e.g. MS-0042, shown to clients
   title text not null,
-  category text not null check (category in ('bridal', 'aso_ebi', 'casual', 'other')),
+  category text not null, -- free text; she can type any category, not a fixed list
   description text,
   labour_price numeric, -- nullable: left blank until she sets a real price
   estimated_yards numeric,
   cover_photo_url text,
-  photos jsonb not null default '[]'::jsonb, -- array of Cloudinary URLs
+  photos jsonb not null default '[]'::jsonb, -- array of Cloudinary image URLs
+  videos jsonb not null default '[]'::jsonb, -- array of Cloudinary video URLs
   active boolean not null default true,
   display_order integer not null default 0, -- lower sorts first; manual lookbook ordering
   created_at timestamptz not null default now()

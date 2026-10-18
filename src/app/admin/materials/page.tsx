@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { createMaterial, updateMaterial } from "./actions";
+import { SubmitButton } from "@/components/SubmitButton";
 import type { Material } from "@/types/db";
 
 export default async function AdminMaterialsPage() {
@@ -32,9 +33,9 @@ export default async function AdminMaterialsPage() {
             placeholder="Price per yard (₦)"
             className="w-full rounded-md border border-accent-soft px-3 py-2"
           />
-          <button type="submit" className="rounded-full bg-accent text-white px-6 py-2">
+          <SubmitButton className="rounded-full bg-accent text-white px-6 py-2" pendingText="Saving…">
             Save material
-          </button>
+          </SubmitButton>
         </form>
       </section>
 
@@ -77,12 +78,12 @@ export default async function AdminMaterialsPage() {
                 <input type="checkbox" name="inStock" defaultChecked={m.in_stock} />
                 In stock
               </label>
-              <button
-                type="submit"
+              <SubmitButton
                 className="rounded-full border border-accent-soft px-4 py-1 text-sm"
+                pendingText="Saving…"
               >
                 Save
-              </button>
+              </SubmitButton>
             </form>
           ))}
           {(!materials || materials.length === 0) && (

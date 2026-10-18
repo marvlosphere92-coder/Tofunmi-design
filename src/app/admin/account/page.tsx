@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { changePassword, changeEmail } from "./actions";
+import { SubmitButton } from "@/components/SubmitButton";
 
 export default async function AdminAccountPage({
   searchParams,
@@ -34,9 +35,9 @@ export default async function AdminAccountPage({
             required
             className="flex-1 rounded-md border border-accent-soft px-3 py-2"
           />
-          <button type="submit" className="rounded-full bg-accent text-white px-5 py-2 text-sm">
+          <SubmitButton className="rounded-full bg-accent text-white px-5 py-2 text-sm" pendingText="Updating…">
             Update
-          </button>
+          </SubmitButton>
         </form>
       </section>
 
@@ -59,9 +60,9 @@ export default async function AdminAccountPage({
             minLength={8}
             className="w-full rounded-md border border-accent-soft px-3 py-2"
           />
-          <button type="submit" className="rounded-full bg-accent text-white px-5 py-2 text-sm">
+          <SubmitButton className="rounded-full bg-accent text-white px-5 py-2 text-sm" pendingText="Updating…">
             Update password
-          </button>
+          </SubmitButton>
         </form>
       </section>
     </div>

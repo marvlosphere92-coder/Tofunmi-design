@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { submitOrder } from "./actions";
+import { SubmitButton } from "@/components/SubmitButton";
 import type { Design, Material } from "@/types/db";
 
 export default async function OrderPage({
@@ -134,12 +135,12 @@ export default async function OrderPage({
             />
           </fieldset>
 
-          <button
-            type="submit"
+          <SubmitButton
             className="w-full rounded-full bg-accent text-white py-3"
+            pendingText="Sending…"
           >
             Send request
-          </button>
+          </SubmitButton>
         </form>
       </main>
       <SiteFooter />

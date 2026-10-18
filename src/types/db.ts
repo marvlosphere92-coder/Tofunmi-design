@@ -1,4 +1,6 @@
-export type DesignCategory = "bridal" | "aso_ebi" | "casual" | "other";
+// Free text — these are just suggestions shown while typing, not an
+// enforced list. She can type any category name.
+export const SUGGESTED_CATEGORIES = ["Bridal", "Aso-ebi", "Casual"];
 
 export type OrderStatus =
   | "requested"
@@ -15,12 +17,13 @@ export interface Design {
   id: string;
   reference: string;
   title: string;
-  category: DesignCategory;
+  category: string;
   description: string | null;
   labour_price: number | null;
   estimated_yards: number | null;
   cover_photo_url: string | null;
   photos: string[];
+  videos: string[];
   active: boolean;
   display_order: number;
   created_at: string;

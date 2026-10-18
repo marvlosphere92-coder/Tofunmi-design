@@ -1,5 +1,6 @@
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { joinWaitlist } from "./actions";
+import { SubmitButton } from "@/components/SubmitButton";
 
 export default async function WaitlistPage({
   searchParams,
@@ -38,9 +39,9 @@ export default async function WaitlistPage({
             className="w-full rounded-md border border-accent-soft px-3 py-2"
             rows={3}
           />
-          <button type="submit" className="w-full rounded-full bg-accent text-white py-3">
+          <SubmitButton className="w-full rounded-full bg-accent text-white py-3" pendingText="Joining…">
             Join waitlist
-          </button>
+          </SubmitButton>
         </form>
       </main>
       <SiteFooter />

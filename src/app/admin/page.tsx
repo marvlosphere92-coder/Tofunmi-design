@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { updateCapacity } from "./actions";
+import { SubmitButton } from "@/components/SubmitButton";
 import type { CapacitySettings, OrderStatus } from "@/types/db";
 
 const statusLabels: Record<OrderStatus, string> = {
@@ -136,9 +137,9 @@ export default async function AdminDashboard() {
             defaultValue={cap?.booked_until ?? ""}
             className="rounded-md border border-accent-soft px-3 py-2 text-sm"
           />
-          <button type="submit" className="rounded-full bg-accent text-white px-5 py-2 text-sm">
+          <SubmitButton className="rounded-full bg-accent text-white px-5 py-2 text-sm" pendingText="Saving…">
             Save
-          </button>
+          </SubmitButton>
         </form>
         <p className="text-xs text-foreground/60 mt-2">
           When unchecked, the order form sends clients to the waitlist instead.

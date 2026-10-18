@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { updateOrderStatus, updateOrderDetails } from "./actions";
+import { SubmitButton } from "@/components/SubmitButton";
 
 const statuses = [
   "requested",
@@ -53,9 +54,12 @@ export default async function AdminOrdersPage() {
                       </option>
                     ))}
                   </select>
-                  <button type="submit" className="rounded-full bg-accent text-white px-4 py-1 text-sm">
+                  <SubmitButton
+                    className="rounded-full bg-accent text-white px-4 py-1 text-sm"
+                    pendingText="Updating…"
+                  >
                     Update status
-                  </button>
+                  </SubmitButton>
                 </form>
               </div>
 
@@ -82,12 +86,12 @@ export default async function AdminOrdersPage() {
                     className="block w-full rounded-md border border-accent-soft px-2 py-1 text-sm mt-1"
                   />
                 </label>
-                <button
-                  type="submit"
+                <SubmitButton
                   className="rounded-full border border-accent-soft px-4 py-1 text-sm"
+                  pendingText="Saving…"
                 >
                   Save details
-                </button>
+                </SubmitButton>
               </form>
             </div>
           );

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { createServiceClient } from "@/lib/supabase/server";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { updateOrderByClient } from "./actions";
+import { SubmitButton } from "@/components/SubmitButton";
 
 export default async function ManageOrderPage({
   params,
@@ -55,9 +56,9 @@ export default async function ManageOrderPage({
               className="w-full rounded-md border border-accent-soft px-3 py-2"
             />
           </div>
-          <button type="submit" className="rounded-full bg-accent text-white px-6 py-3">
+          <SubmitButton className="rounded-full bg-accent text-white px-6 py-3" pendingText="Saving…">
             Save changes
-          </button>
+          </SubmitButton>
         </form>
 
         <p className="mt-6 text-xs text-foreground/60">

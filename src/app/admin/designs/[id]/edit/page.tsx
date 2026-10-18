@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { ImageUploadField } from "@/components/ImageUploadField";
+import { DesignMediaUploadField } from "@/components/DesignMediaUploadField";
+import { SubmitButton } from "@/components/SubmitButton";
 import { updateDesign } from "../../actions";
+import { SUGGESTED_CATEGORIES } from "@/types/db";
 import type { Design } from "@/types/db";
 
 export default async function EditDesignPage({
@@ -30,16 +32,18 @@ export default async function EditDesignPage({
           placeholder="Title"
           className="w-full rounded-md border border-accent-soft px-3 py-2"
         />
-        <select
+        <input
           name="category"
+          list="category-suggestions"
           defaultValue={d.category}
+          placeholder="Category (type anything — e.g. Owambe, Native wear)"
           className="w-full rounded-md border border-accent-soft px-3 py-2"
-        >
-          <option value="bridal">Bridal</option>
-          <option value="aso_ebi">Aso-ebi</option>
-          <option value="casual">Casual</option>
-          <option value="other">Other</option>
-        </select>
+        />
+        <datalist id="category-suggestions">
+          {SUGGESTED_CATEGORIES.map((c) => (
+            <option key={c} value={c} />
+          ))}
+        </datalist>
         <textarea
           name="description"
           defaultValue={d.description ?? ""}
@@ -62,10 +66,10 @@ export default async function EditDesignPage({
           placeholder="Estimated yards (optional)"
           className="w-full rounded-md border border-accent-soft px-3 py-2"
         />
-        <ImageUploadField name="coverPhotoUrl" initialUrl={d.cover_photo_url} />
-        <button type="submit" className="rounded-full bg-accent text-white px-6 py-2">
+        <DesignMediaUploadField initialPhotos={d.photos} initialVideos={d.videos} />
+        <SubmitButton className="rounded-full bg-accent text-white px-6 py-2" pendingText="Saving…">
           Save changes
-        </button>
+        </SubmitButton>
       </form>
     </div>
   );

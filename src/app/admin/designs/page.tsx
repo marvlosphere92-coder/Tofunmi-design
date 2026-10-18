@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { ImageUploadField } from "@/components/ImageUploadField";
+import { DesignMediaUploadField } from "@/components/DesignMediaUploadField";
 import { BulkImageUploadField } from "@/components/BulkImageUploadField";
+import { SubmitButton } from "@/components/SubmitButton";
 import { createDesign, toggleDesignActive, moveDesign, createDraftDesigns } from "./actions";
+import { SUGGESTED_CATEGORIES } from "@/types/db";
 import type { Design } from "@/types/db";
 
 export default async function AdminDesignsPage() {
@@ -25,15 +27,17 @@ export default async function AdminDesignsPage() {
             placeholder="Title"
             className="w-full rounded-md border border-accent-soft px-3 py-2"
           />
-          <select
+          <input
             name="category"
+            list="category-suggestions"
+            placeholder="Category (type anything — e.g. Owambe, Native wear)"
             className="w-full rounded-md border border-accent-soft px-3 py-2"
-          >
-            <option value="bridal">Bridal</option>
-            <option value="aso_ebi">Aso-ebi</option>
-            <option value="casual">Casual</option>
-            <option value="other">Other</option>
-          </select>
+          />
+          <datalist id="category-suggestions">
+            {SUGGESTED_CATEGORIES.map((c) => (
+              <option key={c} value={c} />
+            ))}
+          </datalist>
           <textarea
             name="description"
             placeholder="Description"
@@ -53,10 +57,10 @@ export default async function AdminDesignsPage() {
             placeholder="Estimated yards (optional)"
             className="w-full rounded-md border border-accent-soft px-3 py-2"
           />
-          <ImageUploadField name="coverPhotoUrl" />
-          <button type="submit" className="rounded-full bg-accent text-white px-6 py-2">
+          <DesignMediaUploadField />
+          <SubmitButton className="rounded-full bg-accent text-white px-6 py-2" pendingText="Saving…">
             Save design
-          </button>
+          </SubmitButton>
         </form>
       </section>
 
@@ -64,9 +68,9 @@ export default async function AdminDesignsPage() {
         <h2 className="font-serif text-xl mb-4">Bulk add from a photoshoot</h2>
         <form action={createDraftDesigns} className="max-w-md space-y-3">
           <BulkImageUploadField />
-          <button type="submit" className="rounded-full bg-accent text-white px-6 py-2">
+          <SubmitButton className="rounded-full bg-accent text-white px-6 py-2" pendingText="Creating…">
             Create draft designs
-          </button>
+          </SubmitButton>
         </form>
       </section>
 
@@ -83,28 +87,38 @@ export default async function AdminDesignsPage() {
                   <form action={moveDesign}>
                     <input type="hidden" name="designId" value={d.id} />
                     <input type="hidden" name="direction" value="up" />
-                    <button
-                      type="submit"
+                    <SubmitButton
                       disabled={i === 0}
                       className="text-xs leading-none px-1.5 py-1 disabled:opacity-20"
                       aria-label="Move up"
+                      pendingText="…"
                     >
                       ▲
-                    </button>
+                    </SubmitButton>
                   </form>
                   <form action={moveDesign}>
                     <input type="hidden" name="designId" value={d.id} />
                     <input type="hidden" name="direction" value="down" />
-                    <button
-                      type="submit"
+                    <SubmitButton
                       disabled={i === list.length - 1}
                       className="text-xs leading-none px-1.5 py-1 disabled:opacity-20"
                       aria-label="Move down"
+                      pendingText="…"
                     >
                       ▼
-                    </button>
+                    </SubmitButton>
                   </form>
                 </div>
+                {d.cover_photo_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={d.cover_photo_url}
+                    alt=""
+                    className="w-14 h-14 rounded-md object-cover flex-shrink-0"
+                  />
+                ) : (
+                  <div className="w-14 h-14 rounded-md bg-accent-soft flex-shrink-0" />
+                )}
                 <div>
                   <p className="font-medium">
                     {d.reference} — {d.title}
@@ -126,9 +140,9 @@ export default async function AdminDesignsPage() {
                 <form action={toggleDesignActive}>
                   <input type="hidden" name="designId" value={d.id} />
                   <input type="hidden" name="active" value={String(d.active)} />
-                  <button type="submit" className="text-sm underline">
+                  <SubmitButton className="text-sm underline" pendingText="…">
                     {d.active ? "Hide" : "Show"}
-                  </button>
+                  </SubmitButton>
                 </form>
               </div>
             </div>

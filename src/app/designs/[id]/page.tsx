@@ -18,6 +18,7 @@ export default async function DesignDetailPage({
   if (!data) notFound();
   const design = data as Design;
   const photos = design.photos?.length ? design.photos : [design.cover_photo_url].filter(Boolean);
+  const videos = design.videos ?? [];
 
   return (
     <>
@@ -34,12 +35,20 @@ export default async function DesignDetailPage({
               />
             </FadeIn>
           ))}
+          {videos.map((url, i) => (
+            <FadeIn key={`v-${i}`} delay={(photos.length + i) * 0.1}>
+              <video
+                src={url}
+                controls
+                playsInline
+                className="w-full rounded-lg bg-black"
+              />
+            </FadeIn>
+          ))}
         </div>
 
         <FadeIn delay={0.15}>
-          <p className="text-xs uppercase tracking-wide text-accent">
-            {design.category.replace("_", "-")}
-          </p>
+          <p className="text-xs uppercase tracking-wide text-accent">{design.category}</p>
           <h1 className="font-serif text-3xl mt-1">{design.title}</h1>
           <p className="mt-4 text-foreground/70">{design.description}</p>
 
