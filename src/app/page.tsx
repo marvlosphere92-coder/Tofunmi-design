@@ -4,6 +4,9 @@ import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { HeroReveal } from "@/components/HeroReveal";
 import { DesignCard } from "@/components/DesignCard";
 import { FadeIn } from "@/components/FadeIn";
+import { CategoryTiles } from "@/components/CategoryTiles";
+import { StatsStrip } from "@/components/StatsStrip";
+import { EditorialBreak } from "@/components/EditorialBreak";
 import type { CapacitySettings, Design } from "@/types/db";
 
 export default async function Home() {
@@ -57,8 +60,13 @@ export default async function Home() {
           />
         </div>
 
+        <StatsStrip />
+        <CategoryTiles />
+        <EditorialBreak />
+
         {featured.length > 0 && (
           <section className="mx-auto max-w-6xl px-6 py-16">
+            <h2 className="font-serif text-2xl mb-8 text-center">From the lookbook</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {featured.map((d, i) => (
                 <DesignCard key={d.id} design={d} index={i} />
