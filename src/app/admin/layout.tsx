@@ -19,6 +19,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <Link href="/admin/orders">Orders</Link>
             <Link href="/admin/designs">Designs</Link>
             <Link href="/admin/materials">Materials</Link>
+            <Link href="/admin/account">Account</Link>
           </div>
           <form action={signOut}>
             <button className="text-sm underline">Sign out</button>
