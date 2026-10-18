@@ -38,7 +38,7 @@ export default function AboutPage() {
 
         <FadeIn>
           <section className="mx-auto max-w-2xl px-6 pb-16">
-            <h2 className="font-serif text-2xl mb-6">See her at work</h2>
+            <h2 className="font-serif text-2xl mb-6">See the work in motion</h2>
             <video
               src="https://res.cloudinary.com/jikyx7x6/video/upload/tailor-site/designs/portfolio-video.mp4"
               controls

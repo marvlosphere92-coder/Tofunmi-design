@@ -18,26 +18,26 @@ export default async function OrderConfirmationPage({
       <main className="flex-1 mx-auto max-w-lg px-6 py-20 text-center">
         <h1 className="font-serif text-2xl">Request received</h1>
         <p className="mt-3 text-foreground/70">
-          Your reference is <span className="font-medium">{ref}</span>. She&apos;ll
+          Your reference is <span className="font-medium">{ref}</span>. We&apos;ll
           confirm details and pricing with you on WhatsApp.
         </p>
         <a
           href={`https://wa.me/${whatsappNumber}?text=${text}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-8 inline-block rounded-full bg-accent text-white px-8 py-3 transition active:scale-95"
+          className="mt-8 inline-block rounded-full bg-accent text-white px-8 py-3 transition hover:opacity-90 active:scale-95"
         >
-          Message her on WhatsApp now
+          Message us on WhatsApp now
         </a>
         {id && (
           <div className="mt-4">
-            <Link href={`/order/manage/${id}`} className="text-sm underline">
+            <Link href={`/order/manage/${id}`} className="text-sm underline transition hover:opacity-70">
               Need to change your delivery date or notes? Manage your order
             </Link>
           </div>
         )}
         <div className="mt-6">
-          <Link href="/designs" className="text-sm underline">
+          <Link href="/designs" className="text-sm underline transition hover:opacity-70">
             Back to the lookbook
           </Link>
         </div>

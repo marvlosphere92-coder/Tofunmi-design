@@ -30,7 +30,7 @@ export async function submitOrder(formData: FormData) {
     throw new Error("Name and phone are required.");
   }
 
-  // Respect her capacity setting before creating anything.
+  // Respect the current capacity setting before creating anything.
   const { data: capacity } = await supabase
     .from("capacity_settings")
     .select("accepting_orders")

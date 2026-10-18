@@ -21,9 +21,27 @@ export function SiteNav() {
 }
 
 export function SiteFooter() {
+  const email = process.env.NEXT_PUBLIC_CONTACT_EMAIL;
+  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+  const phone = whatsappNumber ? `+${whatsappNumber}` : null;
+
   return (
     <footer className="border-t border-accent-soft mt-16 py-8 text-center text-sm text-foreground/70">
       <p>&copy; {new Date().getFullYear()} Tofunmi&apos;s Fashion Home. Made by hand, one piece at a time.</p>
+      {(email || phone) && (
+        <p className="mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
+          {email && (
+            <a href={`mailto:${email}`} className="transition hover:opacity-70">
+              {email}
+            </a>
+          )}
+          {phone && (
+            <a href={`tel:${phone}`} className="transition hover:opacity-70">
+              {phone}
+            </a>
+          )}
+        </p>
+      )}
     </footer>
   );
 }

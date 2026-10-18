@@ -15,7 +15,7 @@ export default async function WaitlistPage({
       <main className="flex-1 mx-auto max-w-md px-6 py-16 w-full">
         <h1 className="font-serif text-2xl">Join the waitlist</h1>
         <p className="mt-2 text-sm text-foreground/70">
-          She&apos;s fully booked right now. Leave your details and she&apos;ll
+          We&apos;re fully booked right now. Leave your details and we&apos;ll
           reach out as soon as a slot opens.
         </p>
 

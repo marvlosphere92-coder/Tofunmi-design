@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "./actions";
+import { SubmitButton } from "@/components/SubmitButton";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -15,14 +16,16 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <header className="border-b border-accent-soft">
         <nav className="mx-auto max-w-5xl flex flex-wrap items-center gap-x-4 gap-y-2 px-4 sm:px-6 py-3 sm:py-4">
           <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm flex-1">
-            <Link href="/admin" className="font-medium">Dashboard</Link>
-            <Link href="/admin/orders">Orders</Link>
-            <Link href="/admin/designs">Designs</Link>
-            <Link href="/admin/materials">Materials</Link>
-            <Link href="/admin/account">Account</Link>
+            <Link href="/admin" className="font-medium transition hover:opacity-70">Dashboard</Link>
+            <Link href="/admin/orders" className="transition hover:opacity-70">Orders</Link>
+            <Link href="/admin/designs" className="transition hover:opacity-70">Designs</Link>
+            <Link href="/admin/materials" className="transition hover:opacity-70">Materials</Link>
+            <Link href="/admin/account" className="transition hover:opacity-70">Account</Link>
           </div>
           <form action={signOut}>
-            <button className="text-sm underline">Sign out</button>
+            <SubmitButton className="text-sm underline" pendingText="Signing out…">
+              Sign out
+            </SubmitButton>
           </form>
         </nav>
       </header>

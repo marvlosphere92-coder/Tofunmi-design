@@ -62,7 +62,7 @@ export default async function ManageOrderPage({
         </form>
 
         <p className="mt-6 text-xs text-foreground/60">
-          For anything else — fabric, pricing, measurements — message her directly on WhatsApp.
+          For anything else — fabric, pricing, measurements — message us directly on WhatsApp.
         </p>
       </main>
       <SiteFooter />

@@ -53,7 +53,7 @@ export default async function Home() {
                   {cap.booked_until
                     ? ` until ${new Date(cap.booked_until).toLocaleDateString()}`
                     : ""}
-                  . <Link href="/waitlist" className="underline">Join the waitlist</Link>
+                  . <Link href="/waitlist" className="underline transition hover:opacity-70">Join the waitlist</Link>
                 </p>
               )
             }
@@ -73,7 +73,7 @@ export default async function Home() {
               ))}
             </div>
             <FadeIn className="text-center mt-10">
-              <Link href="/designs" className="text-sm underline">
+              <Link href="/designs" className="text-sm underline transition hover:opacity-70">
                 See the full lookbook
               </Link>
             </FadeIn>

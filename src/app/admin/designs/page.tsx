@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { DesignMediaUploadField } from "@/components/DesignMediaUploadField";
-import { BulkImageUploadField } from "@/components/BulkImageUploadField";
 import { SubmitButton } from "@/components/SubmitButton";
-import { createDesign, toggleDesignActive, moveDesign, createDraftDesigns } from "./actions";
+import { DeleteDesignForm } from "@/components/DeleteDesignForm";
+import { createDesign, toggleDesignActive, moveDesign, deleteDesign } from "./actions";
 import { SUGGESTED_CATEGORIES } from "@/types/db";
 import type { Design } from "@/types/db";
 
@@ -58,19 +58,27 @@ export default async function AdminDesignsPage() {
             className="w-full rounded-md border border-accent-soft px-3 py-2"
           />
           <DesignMediaUploadField />
-          <SubmitButton className="rounded-full bg-accent text-white px-6 py-2" pendingText="Saving…">
-            Save design
-          </SubmitButton>
-        </form>
-      </section>
-
-      <section>
-        <h2 className="font-serif text-xl mb-4">Bulk add from a photoshoot</h2>
-        <form action={createDraftDesigns} className="max-w-md space-y-3">
-          <BulkImageUploadField />
-          <SubmitButton className="rounded-full bg-accent text-white px-6 py-2" pendingText="Creating…">
-            Create draft designs
-          </SubmitButton>
+          <div className="flex gap-3">
+            <SubmitButton
+              name="intent"
+              value="publish"
+              className="rounded-full bg-accent text-white px-6 py-2"
+              pendingText="Saving…"
+            >
+              Save design
+            </SubmitButton>
+            <SubmitButton
+              name="intent"
+              value="draft"
+              className="rounded-full border border-accent-soft px-6 py-2"
+              pendingText="Saving…"
+            >
+              Save as draft
+            </SubmitButton>
+          </div>
+          <p className="text-xs text-foreground/60">
+            A draft is saved hidden from the lookbook until you&apos;re ready to publish it.
+          </p>
         </form>
       </section>
 
@@ -122,9 +130,7 @@ export default async function AdminDesignsPage() {
                 <div>
                   <p className="font-medium">
                     {d.reference} — {d.title}
-                    {!d.active && d.title === "Untitled design" && (
-                      <span className="ml-2 text-xs text-accent">draft</span>
-                    )}
+                    {!d.active && <span className="ml-2 text-xs text-accent">draft</span>}
                   </p>
                   <p className="text-sm text-foreground/60">
                     {d.category}
@@ -134,7 +140,10 @@ export default async function AdminDesignsPage() {
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <Link href={`/admin/designs/${d.id}/edit`} className="text-sm underline">
+                <Link
+                  href={`/admin/designs/${d.id}/edit`}
+                  className="text-sm underline transition hover:opacity-70"
+                >
                   Edit
                 </Link>
                 <form action={toggleDesignActive}>
@@ -144,6 +153,7 @@ export default async function AdminDesignsPage() {
                     {d.active ? "Hide" : "Show"}
                   </SubmitButton>
                 </form>
+                <DeleteDesignForm action={deleteDesign} designId={d.id} title={d.title} />
               </div>
             </div>
           ))}

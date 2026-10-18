@@ -25,7 +25,7 @@ export default async function DesignsPage({
   const { data: designs } = query;
 
   // Build the filter pills from whatever categories actually exist,
-  // rather than a fixed list — she can type any category name.
+  // rather than a fixed list — any category name can be typed in admin.
   const categoryOptions = Array.from(
     new Set((allActive ?? []).map((d) => d.category))
   ).sort((a, b) => a.localeCompare(b));

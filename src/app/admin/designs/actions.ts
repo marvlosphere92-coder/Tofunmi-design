@@ -32,6 +32,8 @@ export async function createDesign(formData: FormData) {
   const photos = formData.getAll("photoUrls").map(String).filter(Boolean);
   const videos = formData.getAll("videoUrls").map(String).filter(Boolean);
 
+  const isDraft = String(formData.get("intent") || "") === "draft";
+
   await supabase.from("designs").insert({
     reference,
     title: String(formData.get("title") || ""),
@@ -42,7 +44,7 @@ export async function createDesign(formData: FormData) {
     cover_photo_url: photos[0] ?? null,
     photos,
     videos,
-    active: true,
+    active: !isDraft,
     display_order: displayOrder,
   });
 
@@ -110,26 +112,11 @@ export async function updateDesign(formData: FormData) {
   revalidatePath(`/admin/designs/${id}/edit`);
 }
 
-export async function createDraftDesigns(formData: FormData) {
+export async function deleteDesign(formData: FormData) {
   const supabase = createServiceClient();
-  const urls = formData.getAll("photoUrls").map(String).filter(Boolean);
-  if (urls.length === 0) return;
+  const id = String(formData.get("designId"));
 
-  const reference = await nextReference(supabase);
-  const refNum = Number(reference.split("-")[1]);
-  const displayOrder = await nextDisplayOrder(supabase);
-
-  const rows = urls.map((url, i) => ({
-    reference: `MS-${String(refNum + i).padStart(4, "0")}`,
-    title: "Untitled design",
-    category: "Other",
-    cover_photo_url: url,
-    photos: [url],
-    active: false, // draft: hidden until she fills in the details
-    display_order: displayOrder + i,
-  }));
-
-  await supabase.from("designs").insert(rows);
+  await supabase.from("designs").delete().eq("id", id);
 
   revalidateDesignPaths();
 }

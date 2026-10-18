@@ -1,5 +1,5 @@
 // Free text — these are just suggestions shown while typing, not an
-// enforced list. She can type any category name.
+// enforced list. Any category name can be typed.
 export const SUGGESTED_CATEGORIES = ["Bridal", "Aso-ebi", "Casual"];
 
 export type OrderStatus =

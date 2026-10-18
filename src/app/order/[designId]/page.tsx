@@ -70,7 +70,7 @@ export default async function OrderPage({
               name="materialId"
               className="w-full rounded-md border border-accent-soft px-3 py-2"
             >
-              <option value="">Choose a fabric from her catalog</option>
+              <option value="">Choose a fabric from our catalog</option>
               {mats.map((m) => (
                 <option key={m.id} value={m.id}>
                   {m.name} — ₦{m.price_per_yard.toLocaleString()}/yard
@@ -79,7 +79,7 @@ export default async function OrderPage({
             </select>
             <p className="text-xs text-foreground/60">
               Final price depends on exact yardage needed for your size —
-              she&apos;ll confirm before the deposit.
+              we&apos;ll confirm before the deposit.
             </p>
           </fieldset>
 
@@ -87,7 +87,7 @@ export default async function OrderPage({
             <legend className="font-medium">Measurements</legend>
             <label className="flex items-center gap-2 text-sm">
               <input type="radio" name="measurementChoice" value="designer" defaultChecked />
-              She&apos;ll measure me herself at a fitting
+              We&apos;ll measure you at a fitting
             </label>
             <label className="flex items-center gap-2 text-sm">
               <input type="radio" name="measurementChoice" value="client" />
