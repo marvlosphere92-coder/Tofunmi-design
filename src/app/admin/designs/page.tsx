@@ -28,7 +28,6 @@ export default async function AdminDesignsPage() {
             <option value="bridal">Bridal</option>
             <option value="aso_ebi">Aso-ebi</option>
             <option value="casual">Casual</option>
-            <option value="men">Men&apos;s</option>
             <option value="other">Other</option>
           </select>
           <textarea

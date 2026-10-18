@@ -1,4 +1,4 @@
-export type DesignCategory = "bridal" | "aso_ebi" | "casual" | "men" | "other";
+export type DesignCategory = "bridal" | "aso_ebi" | "casual" | "other";
 
 export type OrderStatus =
   | "requested"

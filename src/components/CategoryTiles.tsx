@@ -19,17 +19,12 @@ const tiles = [
     label: "Casual",
     image: "https://images.unsplash.com/photo-1663044022768-f4bb7b597b2c?auto=format&fit=crop&w=800&q=80",
   },
-  {
-    category: "men",
-    label: "Men's",
-    image: "https://images.unsplash.com/photo-1663044022557-7d5d4c1d5318?auto=format&fit=crop&w=800&q=80",
-  },
 ];
 
 export function CategoryTiles() {
   return (
     <section className="mx-auto max-w-6xl px-6 py-16">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {tiles.map((t, i) => (
           <motion.div
             key={t.category}

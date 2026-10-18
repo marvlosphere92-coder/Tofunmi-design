@@ -9,7 +9,6 @@ const categories: { value: DesignCategory | "all"; label: string }[] = [
   { value: "bridal", label: "Bridal" },
   { value: "aso_ebi", label: "Aso-ebi" },
   { value: "casual", label: "Casual" },
-  { value: "men", label: "Men's" },
 ];
 
 export default async function DesignsPage({

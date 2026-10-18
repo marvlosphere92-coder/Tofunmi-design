@@ -49,7 +49,7 @@ create table designs (
   id uuid primary key default gen_random_uuid(),
   reference text not null unique, -- e.g. MS-0042, shown to clients
   title text not null,
-  category text not null check (category in ('bridal', 'aso_ebi', 'casual', 'men', 'other')),
+  category text not null check (category in ('bridal', 'aso_ebi', 'casual', 'other')),
   description text,
   labour_price numeric not null,
   estimated_yards numeric,
