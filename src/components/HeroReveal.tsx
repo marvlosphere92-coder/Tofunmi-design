@@ -25,7 +25,7 @@ export function HeroReveal({
           hidden: { opacity: 0, y: 28 },
           show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } },
         }}
-        className="font-serif text-5xl md:text-6xl text-white leading-tight"
+        className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white leading-tight"
       >
         {title}
       </motion.h1>
@@ -37,7 +37,7 @@ export function HeroReveal({
       >
         <Link
           href={cta.href}
-          className="mt-8 inline-block rounded-full bg-white/95 text-foreground px-8 py-3 hover:bg-white transition"
+          className="mt-8 inline-block rounded-full bg-white/95 text-foreground px-8 py-3 hover:bg-white transition active:scale-95"
         >
           {cta.label}
         </Link>

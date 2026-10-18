@@ -17,7 +17,7 @@ export function SubmitButton({
       type="submit"
       disabled={pending || disabled}
       aria-busy={pending}
-      className={`${className ?? ""} disabled:opacity-60 disabled:cursor-not-allowed`}
+      className={`${className ?? ""} transition active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed disabled:active:scale-100`}
       {...props}
     >
       {pending ? pendingText : children}

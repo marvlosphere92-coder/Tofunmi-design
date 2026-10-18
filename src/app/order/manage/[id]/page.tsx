@@ -34,7 +34,7 @@ export default async function ManageOrderPage({
           <input type="hidden" name="orderId" value={order.id} />
           <div>
             <label className="block text-sm text-foreground/70 mb-1" htmlFor="eventDate">
-              Event date (when you need to wear this)
+              Delivery date (when you need this ready by)
             </label>
             <input
               id="eventDate"

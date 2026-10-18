@@ -69,7 +69,7 @@ export default async function AdminOrdersPage() {
               >
                 <input type="hidden" name="orderId" value={o.id} />
                 <label className="text-xs text-foreground/60">
-                  Event date
+                  Delivery date
                   <input
                     type="date"
                     name="eventDate"

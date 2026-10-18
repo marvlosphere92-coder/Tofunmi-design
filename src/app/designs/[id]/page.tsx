@@ -68,7 +68,7 @@ export default async function DesignDetailPage({
           <div className="mt-8 flex flex-col gap-3">
             <Link
               href={`/order/${design.id}`}
-              className="rounded-full bg-accent text-white text-center px-6 py-3"
+              className="rounded-full bg-accent text-white text-center px-6 py-3 transition active:scale-95"
             >
               Request this order
             </Link>
@@ -76,7 +76,7 @@ export default async function DesignDetailPage({
               href={whatsappOrderLink(design.title, design.reference)}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full border border-accent-soft text-center px-6 py-3"
+              className="rounded-full border border-accent-soft text-center px-6 py-3 transition active:scale-95"
             >
               Ask a quick question on WhatsApp
             </a>

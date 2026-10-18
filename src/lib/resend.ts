@@ -14,7 +14,7 @@ export async function sendOrderStatusEmail(opts: {
     `Hi ${opts.clientName}, your order ${opts.orderReference} is now: ${opts.status.replace(/_/g, " ")}.`,
   ];
   if (opts.manageUrl) {
-    lines.push(`Need to change your event date or notes? ${opts.manageUrl}`);
+    lines.push(`Need to change your delivery date or notes? ${opts.manageUrl}`);
   }
 
   await resend.emails.send({
@@ -38,7 +38,7 @@ export async function sendOrderDetailsUpdatedEmail(opts: {
   const resend = new Resend(process.env.RESEND_API_KEY);
   const lines = [`Hi ${opts.clientName}, the details on order ${opts.orderReference} were just updated`];
   lines.push(opts.changedBy === "admin" ? "by the designer." : "— here's a copy for your records.");
-  if (opts.eventDate) lines.push(`Event date: ${opts.eventDate}`);
+  if (opts.eventDate) lines.push(`Delivery date: ${opts.eventDate}`);
   if (opts.budgetNote) lines.push(`Notes: ${opts.budgetNote}`);
 
   await resend.emails.send({

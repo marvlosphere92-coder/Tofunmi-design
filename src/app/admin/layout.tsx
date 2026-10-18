@@ -13,8 +13,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <header className="border-b border-accent-soft">
-        <nav className="mx-auto max-w-5xl flex items-center justify-between px-6 py-4">
-          <div className="flex gap-6 text-sm">
+        <nav className="mx-auto max-w-5xl flex flex-wrap items-center gap-x-4 gap-y-2 px-4 sm:px-6 py-3 sm:py-4">
+          <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm flex-1">
             <Link href="/admin" className="font-medium">Dashboard</Link>
             <Link href="/admin/orders">Orders</Link>
             <Link href="/admin/designs">Designs</Link>
@@ -26,7 +26,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </form>
         </nav>
       </header>
-      <main className="flex-1 mx-auto max-w-5xl w-full px-6 py-10">{children}</main>
+      <main className="flex-1 mx-auto max-w-5xl w-full px-4 sm:px-6 py-10">{children}</main>
     </div>
   );
 }

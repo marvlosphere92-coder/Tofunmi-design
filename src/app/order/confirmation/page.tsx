@@ -25,14 +25,14 @@ export default async function OrderConfirmationPage({
           href={`https://wa.me/${whatsappNumber}?text=${text}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-8 inline-block rounded-full bg-accent text-white px-8 py-3"
+          className="mt-8 inline-block rounded-full bg-accent text-white px-8 py-3 transition active:scale-95"
         >
           Message her on WhatsApp now
         </a>
         {id && (
           <div className="mt-4">
             <Link href={`/order/manage/${id}`} className="text-sm underline">
-              Need to change your event date or notes? Manage your order
+              Need to change your delivery date or notes? Manage your order
             </Link>
           </div>
         )}

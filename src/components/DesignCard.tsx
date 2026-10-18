@@ -15,15 +15,16 @@ export function DesignCard({ design, index = 0 }: { design: Design; index?: numb
       <Link href={`/designs/${design.id}`} className="group block">
         <motion.div
           className="aspect-[3/4] overflow-hidden rounded-lg bg-accent-soft"
-          whileHover="hover"
+          whileHover="active"
+          whileTap="active"
         >
           {design.cover_photo_url && (
             <motion.img
               src={design.cover_photo_url}
               alt={design.title}
               className="h-full w-full object-cover"
-              variants={{ hover: { scale: 1.06 } }}
-              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              variants={{ active: { scale: 1.06 } }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
             />
           )}
         </motion.div>
