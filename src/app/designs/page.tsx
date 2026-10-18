@@ -23,7 +23,7 @@ export default async function DesignsPage({
   if (category && category !== "all") {
     query = query.eq("category", category);
   }
-  const { data: designs } = await query.order("created_at", { ascending: false });
+  const { data: designs } = await query.order("display_order", { ascending: true });
 
   return (
     <>

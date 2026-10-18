@@ -22,6 +22,7 @@ export interface Design {
   cover_photo_url: string | null;
   photos: string[];
   active: boolean;
+  display_order: number;
   created_at: string;
 }
 

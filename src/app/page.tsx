@@ -17,7 +17,7 @@ export default async function Home() {
       .from("designs")
       .select("*")
       .eq("active", true)
-      .order("created_at", { ascending: false })
+      .order("display_order", { ascending: true })
       .limit(8),
     supabase.from("capacity_settings").select("*").single(),
   ]);

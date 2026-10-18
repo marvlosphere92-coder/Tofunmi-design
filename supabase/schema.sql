@@ -56,6 +56,7 @@ create table designs (
   cover_photo_url text,
   photos jsonb not null default '[]'::jsonb, -- array of Cloudinary URLs
   active boolean not null default true,
+  display_order integer not null default 0, -- lower sorts first; manual lookbook ordering
   created_at timestamptz not null default now()
 );
 
@@ -136,6 +137,11 @@ alter table capacity_settings enable row level security;
 
 create policy "public can read active designs" on designs
   for select using (active = true);
+
+-- The admin dashboard reads inactive/draft designs too (e.g. bulk-added
+-- drafts awaiting her edit), via the anon-key client as a logged-in user.
+create policy "authenticated can read all designs" on designs
+  for select using (auth.role() = 'authenticated');
 
 create policy "public can read materials" on materials
   for select using (true);
