@@ -51,7 +51,7 @@ create table designs (
   title text not null,
   category text not null check (category in ('bridal', 'aso_ebi', 'casual', 'other')),
   description text,
-  labour_price numeric not null,
+  labour_price numeric, -- nullable: left blank until she sets a real price
   estimated_yards numeric,
   cover_photo_url text,
   photos jsonb not null default '[]'::jsonb, -- array of Cloudinary URLs

@@ -26,10 +26,13 @@ export default async function OrderPage({
       <SiteNav />
       <main className="flex-1 mx-auto max-w-xl px-6 py-12 w-full">
         <h1 className="font-serif text-2xl">Request: {d.title}</h1>
-        <p className="text-sm text-foreground/60 mt-1">
-          Labour from ₦{d.labour_price.toLocaleString()}
-          {d.estimated_yards ? ` · ~${d.estimated_yards} yards` : ""}
-        </p>
+        {(d.labour_price != null || d.estimated_yards) && (
+          <p className="text-sm text-foreground/60 mt-1">
+            {d.labour_price != null ? `Labour from ₦${d.labour_price.toLocaleString()}` : ""}
+            {d.labour_price != null && d.estimated_yards ? " · " : ""}
+            {d.estimated_yards ? `~${d.estimated_yards} yards` : ""}
+          </p>
+        )}
 
         <form action={submitOrder} className="mt-8 space-y-6">
           <input type="hidden" name="designId" value={d.id} />

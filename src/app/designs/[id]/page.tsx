@@ -43,11 +43,18 @@ export default async function DesignDetailPage({
           <h1 className="font-serif text-3xl mt-1">{design.title}</h1>
           <p className="mt-4 text-foreground/70">{design.description}</p>
 
-          <p className="mt-6 text-lg">
-            From <span className="font-medium">₦{design.labour_price.toLocaleString()}</span>{" "}
-            labour
-            {design.estimated_yards ? ` · ~${design.estimated_yards} yards` : ""}
-          </p>
+          {(design.labour_price != null || design.estimated_yards) && (
+            <p className="mt-6 text-lg">
+              {design.labour_price != null && (
+                <>
+                  From <span className="font-medium">₦{design.labour_price.toLocaleString()}</span>{" "}
+                  labour
+                </>
+              )}
+              {design.labour_price != null && design.estimated_yards ? " · " : ""}
+              {design.estimated_yards ? `~${design.estimated_yards} yards` : ""}
+            </p>
+          )}
 
           <div className="mt-8 flex flex-col gap-3">
             <Link

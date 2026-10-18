@@ -8,7 +8,7 @@ export function SiteNav() {
     <header className="border-b border-accent-soft">
       <nav className="mx-auto max-w-6xl flex items-center justify-between px-6 py-5">
         <Link href="/" className="font-serif text-2xl tracking-wide">
-          Her Brand
+          Tofunmi&apos;s Fashion Home
         </Link>
         <div className="flex gap-6 text-sm">
           <Link href="/designs" className={navLinkClass}>Lookbook</Link>
@@ -23,7 +23,7 @@ export function SiteNav() {
 export function SiteFooter() {
   return (
     <footer className="border-t border-accent-soft mt-16 py-8 text-center text-sm text-foreground/70">
-      <p>&copy; {new Date().getFullYear()} Her Brand. Made by hand, one piece at a time.</p>
+      <p>&copy; {new Date().getFullYear()} Tofunmi&apos;s Fashion Home. Made by hand, one piece at a time.</p>
     </footer>
   );
 }

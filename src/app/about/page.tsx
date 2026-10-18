@@ -37,6 +37,18 @@ export default function AboutPage() {
         </FadeIn>
 
         <FadeIn>
+          <section className="mx-auto max-w-2xl px-6 pb-16">
+            <h2 className="font-serif text-2xl mb-6">See her at work</h2>
+            <video
+              src="https://res.cloudinary.com/jikyx7x6/video/upload/tailor-site/designs/portfolio-video.mp4"
+              controls
+              playsInline
+              className="w-full rounded-lg bg-black"
+            />
+          </section>
+        </FadeIn>
+
+        <FadeIn>
           <section id="faq" className="mx-auto max-w-2xl px-6 pb-20">
             <h2 className="font-serif text-2xl mb-6">FAQ</h2>
             <div className="space-y-6 text-sm">

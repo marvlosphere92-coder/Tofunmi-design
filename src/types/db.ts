@@ -17,7 +17,7 @@ export interface Design {
   title: string;
   category: DesignCategory;
   description: string | null;
-  labour_price: number;
+  labour_price: number | null;
   estimated_yards: number | null;
   cover_photo_url: string | null;
   photos: string[];

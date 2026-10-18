@@ -13,7 +13,7 @@ const body = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Her Brand | Bespoke Fashion",
+  title: "Tofunmi's Fashion Home | Bespoke Fashion",
   description: "Bespoke and ready-to-wear fashion, made by hand.",
 };
 

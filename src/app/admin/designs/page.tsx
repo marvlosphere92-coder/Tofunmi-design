@@ -39,8 +39,7 @@ export default async function AdminDesignsPage() {
           <input
             name="labourPrice"
             type="number"
-            required
-            placeholder="Labour price (₦)"
+            placeholder="Labour price (₦) — optional, leave blank if not set yet"
             className="w-full rounded-md border border-accent-soft px-3 py-2"
           />
           <input
@@ -70,7 +69,8 @@ export default async function AdminDesignsPage() {
                   {d.reference} — {d.title}
                 </p>
                 <p className="text-sm text-foreground/60">
-                  {d.category} · ₦{d.labour_price.toLocaleString()} ·{" "}
+                  {d.category}
+                  {d.labour_price != null ? ` · ₦${d.labour_price.toLocaleString()}` : " · price not set"} ·{" "}
                   {d.active ? "active" : "hidden"}
                 </p>
               </div>

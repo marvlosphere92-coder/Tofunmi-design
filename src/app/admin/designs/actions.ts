@@ -17,7 +17,7 @@ export async function createDesign(formData: FormData) {
     title: String(formData.get("title") || ""),
     category: String(formData.get("category") || "other") as DesignCategory,
     description: String(formData.get("description") || "") || null,
-    labour_price: Number(formData.get("labourPrice") || 0),
+    labour_price: formData.get("labourPrice") ? Number(formData.get("labourPrice")) : null,
     estimated_yards: formData.get("estimatedYards") ? Number(formData.get("estimatedYards")) : null,
     cover_photo_url: coverPhotoUrl,
     photos: coverPhotoUrl ? [coverPhotoUrl] : [],
