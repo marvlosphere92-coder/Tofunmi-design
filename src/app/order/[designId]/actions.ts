@@ -1,8 +1,9 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { sendOrderStatusEmail } from "@/lib/resend";
+import { linkClientAccount } from "@/lib/linkClientAccount";
 
 async function nextReference(
   supabase: ReturnType<typeof createServiceClient>,
@@ -40,24 +41,35 @@ export async function submitOrder(formData: FormData) {
     redirect(`/waitlist?design=${designId}`);
   }
 
-  // Find or create the client by phone.
-  let clientId: string;
-  const { data: existingClient } = await supabase
-    .from("clients")
-    .select("id")
-    .eq("phone", phone)
-    .maybeSingle();
+  // If a customer is signed in, attach the order to their linked client
+  // record (creating/linking it if this is their first order) instead of
+  // matching by phone, so it shows up in their "My orders" account page.
+  const sessionClient = await createClient();
+  const { data: userData } = await sessionClient.auth.getUser();
+  const signedInClientId = userData.user ? await linkClientAccount(userData.user) : null;
 
-  if (existingClient) {
-    clientId = existingClient.id;
+  let clientId: string;
+  if (signedInClientId) {
+    clientId = signedInClientId;
+    await supabase.from("clients").update({ full_name: fullName, phone, email }).eq("id", clientId);
   } else {
-    const { data: newClient, error } = await supabase
+    const { data: existingClient } = await supabase
       .from("clients")
-      .insert({ full_name: fullName, phone, email })
       .select("id")
-      .single();
-    if (error || !newClient) throw new Error("Could not save client details.");
-    clientId = newClient.id;
+      .eq("phone", phone)
+      .maybeSingle();
+
+    if (existingClient) {
+      clientId = existingClient.id;
+    } else {
+      const { data: newClient, error } = await supabase
+        .from("clients")
+        .insert({ full_name: fullName, phone, email })
+        .select("id")
+        .single();
+      if (error || !newClient) throw new Error("Could not save client details.");
+      clientId = newClient.id;
+    }
   }
 
   // Measurements: only create a row if the client chose to submit their own now.

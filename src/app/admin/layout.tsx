@@ -6,8 +6,9 @@ import { SubmitButton } from "@/components/SubmitButton";
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
+  const isAdmin = data.user?.app_metadata?.role === "admin";
 
-  if (!data.user) {
+  if (!isAdmin) {
     return <>{children}</>; // login page itself, proxy already redirects other routes
   }
 
@@ -20,6 +21,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <Link href="/admin/orders" className="transition hover:opacity-70">Orders</Link>
             <Link href="/admin/designs" className="transition hover:opacity-70">Designs</Link>
             <Link href="/admin/materials" className="transition hover:opacity-70">Materials</Link>
+            <Link href="/admin/clients" className="transition hover:opacity-70">Clients</Link>
+            <Link href="/admin/waitlist" className="transition hover:opacity-70">Waitlist</Link>
             <Link href="/admin/account" className="transition hover:opacity-70">Account</Link>
           </div>
           <form action={signOut}>

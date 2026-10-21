@@ -2,13 +2,15 @@
 
 create extension if not exists "pgcrypto";
 
--- Clients (not Supabase auth users — she has no client logins yet,
--- just records tied to a phone number)
+-- Clients. Most are guest records tied to a phone number from a guest
+-- order; user_id is set once/if that person signs in with Google and
+-- links (or creates) their account.
 create table clients (
   id uuid primary key default gen_random_uuid(),
   full_name text not null,
-  phone text not null,
+  phone text,
   email text,
+  user_id uuid references auth.users (id) unique,
   created_at timestamptz not null default now()
 );
 create index clients_phone_idx on clients (phone);
@@ -124,8 +126,20 @@ create table capacity_settings (
 );
 insert into capacity_settings (id) values (1);
 
+-- There's only one admin account, flagged via an app_metadata role claim
+-- on her auth user (set once below) rather than a fixed email — so her
+-- self-service "change email" feature can't accidentally lock her out.
+-- Used by RLS policies below to distinguish her session from a customer's
+-- own Google-authenticated session.
+create or replace function is_admin() returns boolean
+language sql stable
+as $$
+  select coalesce(auth.jwt() -> 'app_metadata' ->> 'role', '') = 'admin';
+$$;
+
 -- Row Level Security: public read on catalog data, everything else locked
--- down to the service role (used only from trusted server actions/admin).
+-- down to the service role (used only from trusted server actions/admin),
+-- plus narrow self-serve reads for a signed-in customer's own records.
 alter table clients enable row level security;
 alter table measurements enable row level security;
 alter table materials enable row level security;
@@ -139,10 +153,12 @@ alter table capacity_settings enable row level security;
 create policy "public can read active designs" on designs
   for select using (active = true);
 
--- The admin dashboard reads inactive/draft designs too (e.g. bulk-added
--- drafts awaiting her edit), via the anon-key client as a logged-in user.
-create policy "authenticated can read all designs" on designs
-  for select using (auth.role() = 'authenticated');
+-- The admin dashboard reads inactive/draft designs too (e.g. hidden
+-- designs awaiting her edit), via the anon-key client as her logged-in
+-- session specifically — not just any authenticated session, since
+-- customers now have Google-authenticated sessions too.
+create policy "admin can read all designs" on designs
+  for select using (is_admin());
 
 create policy "public can read materials" on materials
   for select using (true);
@@ -155,21 +171,45 @@ create policy "public can read capacity" on capacity_settings
 
 -- Writes to clients, measurements, orders, order_status_events, and
 -- waitlist_entries only ever happen via the service-role client inside
--- server actions, never directly from the browser. But the admin dashboard
--- reads them as a logged-in Supabase Auth user (anon-key client, subject to
--- RLS), so grant read access to any authenticated session. There's only
--- ever one admin account, so "authenticated" is an adequate proxy for "her".
-create policy "authenticated can read clients" on clients
-  for select using (auth.role() = 'authenticated');
+-- server actions, never directly from the browser. Reads are: the admin
+-- dashboard (her session, anon-key client, subject to RLS) sees
+-- everything; a signed-in customer's own session sees only rows linked
+-- to their account via clients.user_id.
+create policy "admin can read all clients" on clients
+  for select using (is_admin());
+create policy "clients can read own row" on clients
+  for select using (auth.uid() = user_id);
 
-create policy "authenticated can read measurements" on measurements
-  for select using (auth.role() = 'authenticated');
+create policy "admin can read all measurements" on measurements
+  for select using (is_admin());
+create policy "clients can read own measurements" on measurements
+  for select using (
+    exists (
+      select 1 from clients
+      where clients.id = measurements.client_id and clients.user_id = auth.uid()
+    )
+  );
 
-create policy "authenticated can read orders" on orders
-  for select using (auth.role() = 'authenticated');
+create policy "admin can read all orders" on orders
+  for select using (is_admin());
+create policy "clients can read own orders" on orders
+  for select using (
+    exists (
+      select 1 from clients
+      where clients.id = orders.client_id and clients.user_id = auth.uid()
+    )
+  );
 
-create policy "authenticated can read order_status_events" on order_status_events
-  for select using (auth.role() = 'authenticated');
+create policy "admin can read all order_status_events" on order_status_events
+  for select using (is_admin());
+create policy "clients can read own order_status_events" on order_status_events
+  for select using (
+    exists (
+      select 1 from orders
+      join clients on clients.id = orders.client_id
+      where orders.id = order_status_events.order_id and clients.user_id = auth.uid()
+    )
+  );
 
-create policy "authenticated can read waitlist_entries" on waitlist_entries
-  for select using (auth.role() = 'authenticated');
+create policy "admin can read all waitlist_entries" on waitlist_entries
+  for select using (is_admin());

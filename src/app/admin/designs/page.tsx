@@ -2,7 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { DesignMediaUploadField } from "@/components/DesignMediaUploadField";
 import { SubmitButton } from "@/components/SubmitButton";
-import { DeleteDesignForm } from "@/components/DeleteDesignForm";
+import { ConfirmDeleteForm } from "@/components/ConfirmDeleteForm";
 import { createDesign, toggleDesignActive, moveDesign, deleteDesign } from "./actions";
 import { SUGGESTED_CATEGORIES } from "@/types/db";
 import type { Design } from "@/types/db";
@@ -153,7 +153,11 @@ export default async function AdminDesignsPage() {
                     {d.active ? "Hide" : "Show"}
                   </SubmitButton>
                 </form>
-                <DeleteDesignForm action={deleteDesign} designId={d.id} title={d.title} />
+                <ConfirmDeleteForm
+                  action={deleteDesign}
+                  hiddenFields={{ designId: d.id }}
+                  confirmMessage={`Delete "${d.title}"? This can't be undone.`}
+                />
               </div>
             </div>
           ))}

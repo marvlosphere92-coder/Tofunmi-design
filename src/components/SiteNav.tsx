@@ -1,9 +1,14 @@
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
 
 const navLinkClass =
   "relative after:absolute after:left-0 after:-bottom-1 after:h-px after:w-0 after:bg-foreground after:transition-all after:duration-300 hover:after:w-full";
 
-export function SiteNav() {
+export async function SiteNav() {
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getUser();
+  const isCustomer = data.user && data.user.app_metadata?.role !== "admin";
+
   return (
     <header className="border-b border-accent-soft">
       <nav className="mx-auto max-w-6xl flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 sm:px-6 py-4 sm:py-5">
@@ -14,6 +19,9 @@ export function SiteNav() {
           <Link href="/designs" className={navLinkClass}>Lookbook</Link>
           <Link href="/about" className={navLinkClass}>About</Link>
           <Link href="/about#faq" className={navLinkClass}>FAQ</Link>
+          <Link href="/account" className={navLinkClass}>
+            {isCustomer ? "My orders" : "Sign in"}
+          </Link>
         </div>
       </nav>
     </header>

@@ -1,19 +1,9 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { updateCapacity } from "./actions";
 import { SubmitButton } from "@/components/SubmitButton";
-import type { CapacitySettings, OrderStatus } from "@/types/db";
-
-const statusLabels: Record<OrderStatus, string> = {
-  requested: "Requested",
-  confirmed: "Confirmed",
-  fabric_received: "Fabric received",
-  cutting: "Cutting",
-  sewing: "Sewing",
-  ready_for_fitting: "Ready for fitting",
-  ready_for_pickup: "Ready for pickup",
-  completed: "Completed",
-  cancelled: "Cancelled",
-};
+import { ORDER_STATUS_LABELS } from "@/types/db";
+import type { CapacitySettings } from "@/types/db";
 
 export default async function AdminDashboard() {
   const supabase = await createClient();
@@ -71,10 +61,13 @@ export default async function AdminDashboard() {
           <p className="text-sm text-foreground/60">New requests</p>
           <p className="text-2xl font-medium">{pendingCount ?? 0}</p>
         </div>
-        <div className="rounded-lg border border-accent-soft p-5">
+        <Link
+          href="/admin/waitlist"
+          className="rounded-lg border border-accent-soft p-5 transition hover:bg-accent-soft/40"
+        >
           <p className="text-sm text-foreground/60">Waitlist (uncontacted)</p>
           <p className="text-2xl font-medium">{waitlistCount ?? 0}</p>
-        </div>
+        </Link>
       </div>
 
       <section>
@@ -94,7 +87,7 @@ export default async function AdminDashboard() {
           <div>
             <p className="text-sm font-medium mb-2">By status</p>
             <div className="space-y-1 text-sm">
-              {Object.entries(statusLabels).map(([key, label]) => (
+              {Object.entries(ORDER_STATUS_LABELS).map(([key, label]) => (
                 <div key={key} className="flex justify-between text-foreground/70">
                   <span>{label}</span>
                   <span>{statusCounts[key] ?? 0}</span>

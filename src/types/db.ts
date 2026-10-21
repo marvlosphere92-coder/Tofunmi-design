@@ -13,6 +13,29 @@ export type OrderStatus =
   | "completed"
   | "cancelled";
 
+export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
+  requested: "Requested",
+  confirmed: "Confirmed",
+  fabric_received: "Fabric received",
+  cutting: "Cutting",
+  sewing: "Sewing",
+  ready_for_fitting: "Ready for fitting",
+  ready_for_pickup: "Ready for pickup",
+  completed: "Completed",
+  cancelled: "Cancelled",
+};
+
+export const ORDER_STATUS_SEQUENCE: OrderStatus[] = [
+  "requested",
+  "confirmed",
+  "fabric_received",
+  "cutting",
+  "sewing",
+  "ready_for_fitting",
+  "ready_for_pickup",
+  "completed",
+];
+
 export interface Design {
   id: string;
   reference: string;
@@ -46,8 +69,20 @@ export interface CapacitySettings {
 export interface Client {
   id: string;
   full_name: string;
-  phone: string;
+  phone: string | null;
   email: string | null;
+  user_id: string | null;
+  created_at: string;
+}
+
+export interface WaitlistEntry {
+  id: string;
+  full_name: string;
+  phone: string;
+  design_reference: string | null;
+  notes: string | null;
+  contacted: boolean;
+  created_at: string;
 }
 
 export interface Measurement {
