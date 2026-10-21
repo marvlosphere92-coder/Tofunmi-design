@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { GoogleSignInButton } from "@/components/GoogleSignInButton";
+import { EmailSignInForm } from "@/components/EmailSignInForm";
 import { SubmitButton } from "@/components/SubmitButton";
 import { signOutCustomer } from "./actions";
 import { ORDER_STATUS_LABELS, ORDER_STATUS_SEQUENCE } from "@/types/db";
@@ -22,6 +23,12 @@ export default async function AccountPage() {
             Sign in to track your orders and see where each piece is in progress.
           </p>
           <GoogleSignInButton className="mt-8 inline-block rounded-full bg-accent text-white px-8 py-3" />
+          <div className="mt-8 max-w-xs mx-auto">
+            <p className="text-xs uppercase tracking-wide text-foreground/50 mb-3">
+              Or, without Google
+            </p>
+            <EmailSignInForm />
+          </div>
         </main>
         <SiteFooter />
       </>

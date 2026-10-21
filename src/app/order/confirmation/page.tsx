@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
+import { OrderCompletedTracker } from "@/components/OrderCompletedTracker";
 
 export default async function OrderConfirmationPage({
   searchParams,
@@ -15,6 +16,7 @@ export default async function OrderConfirmationPage({
   return (
     <>
       <SiteNav />
+      <OrderCompletedTracker reference={ref} />
       <main className="flex-1 mx-auto max-w-lg px-6 py-20 text-center">
         <h1 className="font-serif text-2xl">Request received</h1>
         <p className="mt-3 text-foreground/70">

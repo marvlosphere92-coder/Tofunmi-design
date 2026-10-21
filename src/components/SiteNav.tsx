@@ -50,6 +50,11 @@ export function SiteFooter() {
           )}
         </p>
       )}
+      <p className="mt-2">
+        <Link href="/privacy" className="underline transition hover:opacity-70">
+          Privacy Policy
+        </Link>
+      </p>
     </footer>
   );
 }
