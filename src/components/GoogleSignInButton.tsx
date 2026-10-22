@@ -20,7 +20,14 @@ export function GoogleSignInButton({ className }: { className?: string }) {
       }}
       className={`${className ?? ""} shadow-sm transition hover:opacity-90 hover:shadow-lg hover:-translate-y-0.5 active:scale-95 active:translate-y-0 disabled:opacity-60 disabled:hover:translate-y-0`}
     >
-      {pending ? "Redirecting…" : "Sign in with Google"}
+      {pending ? (
+        <span className="inline-flex items-center justify-center gap-2">
+          <span className="w-3.5 h-3.5 rounded-full border-2 border-current border-t-transparent animate-spin" />
+          Redirecting…
+        </span>
+      ) : (
+        "Sign in with Google"
+      )}
     </button>
   );
 }

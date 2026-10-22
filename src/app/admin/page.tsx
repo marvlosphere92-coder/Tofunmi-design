@@ -5,6 +5,18 @@ import { SubmitButton } from "@/components/SubmitButton";
 import { ORDER_STATUS_LABELS } from "@/types/db";
 import type { CapacitySettings } from "@/types/db";
 
+const STATUS_DOT_COLORS: Record<string, string> = {
+  requested: "bg-gold",
+  confirmed: "bg-accent",
+  fabric_received: "bg-accent",
+  cutting: "bg-accent",
+  sewing: "bg-accent",
+  ready_for_fitting: "bg-accent",
+  ready_for_pickup: "bg-accent",
+  completed: "bg-emerald-500",
+  cancelled: "bg-red-400",
+};
+
 export default async function AdminDashboard() {
   const supabase = await createClient();
 
@@ -59,29 +71,29 @@ export default async function AdminDashboard() {
       <h1 className="font-serif text-2xl">Dashboard</h1>
 
       <div className="grid grid-cols-2 gap-4">
-        <div className="rounded-lg border border-accent-soft p-5">
+        <div className="rounded-lg bg-surface shadow-sm border-l-4 border-gold p-5">
           <p className="text-sm text-foreground/60">New requests</p>
-          <p className="text-2xl font-medium">{pendingCount ?? 0}</p>
+          <p className="text-2xl font-medium text-gold">{pendingCount ?? 0}</p>
         </div>
         <Link
           href="/admin/waitlist"
-          className="rounded-lg border border-accent-soft p-5 transition hover:bg-accent-soft/40"
+          className="rounded-lg bg-surface shadow-sm border-l-4 border-accent p-5 transition hover:shadow-md hover:-translate-y-0.5"
         >
           <p className="text-sm text-foreground/60">Waitlist (uncontacted)</p>
-          <p className="text-2xl font-medium">{waitlistCount ?? 0}</p>
+          <p className="text-2xl font-medium text-accent">{waitlistCount ?? 0}</p>
         </Link>
       </div>
 
       <section>
         <h2 className="font-medium mb-3">Orders &amp; sales</h2>
         <div className="grid grid-cols-2 gap-4 mb-4">
-          <div className="rounded-lg border border-accent-soft p-5">
+          <div className="rounded-lg bg-surface shadow-sm border-l-4 border-plum p-5">
             <p className="text-sm text-foreground/60">Orders this month</p>
             <p className="text-2xl font-medium">{ordersThisMonth}</p>
           </div>
-          <div className="rounded-lg border border-accent-soft p-5">
+          <div className="rounded-lg bg-surface shadow-sm border-l-4 border-emerald-500 p-5">
             <p className="text-sm text-foreground/60">Revenue (completed orders)</p>
-            <p className="text-2xl font-medium">₦{revenue.toLocaleString()}</p>
+            <p className="text-2xl font-medium text-emerald-600">₦{revenue.toLocaleString()}</p>
           </div>
         </div>
 
@@ -101,8 +113,11 @@ export default async function AdminDashboard() {
             <p className="text-sm font-medium mb-2">By status</p>
             <div className="space-y-1 text-sm">
               {Object.entries(ORDER_STATUS_LABELS).map(([key, label]) => (
-                <div key={key} className="flex justify-between text-foreground/70">
-                  <span>{label}</span>
+                <div key={key} className="flex items-center justify-between text-foreground/70">
+                  <span className="flex items-center gap-2">
+                    <span className={`w-2 h-2 rounded-full ${STATUS_DOT_COLORS[key]}`} />
+                    {label}
+                  </span>
                   <span>{statusCounts[key] ?? 0}</span>
                 </div>
               ))}
