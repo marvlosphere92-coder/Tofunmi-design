@@ -13,7 +13,7 @@ export async function SiteNav() {
     <header className="border-b border-accent-soft">
       <nav className="mx-auto max-w-6xl flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 sm:px-6 py-4 sm:py-5">
         <Link href="/" className="font-serif text-lg sm:text-2xl tracking-wide leading-tight">
-          Tofunmi&apos;s Fashion Home
+          SimplyBukky
         </Link>
         <div className="flex gap-4 sm:gap-6 text-sm">
           <Link href="/designs" className={navLinkClass}>Lookbook</Link>
@@ -35,7 +35,7 @@ export function SiteFooter() {
 
   return (
     <footer className="border-t border-accent-soft mt-16 py-8 text-center text-sm text-foreground/70">
-      <p>&copy; {new Date().getFullYear()} Tofunmi&apos;s Fashion Home. Made by hand, one piece at a time.</p>
+      <p>&copy; {new Date().getFullYear()} SimplyBukky. Made by hand, one piece at a time.</p>
       {(email || phone) && (
         <p className="mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
           {email && (

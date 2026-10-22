@@ -1,7 +1,7 @@
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
 
 export const metadata = {
-  title: "Privacy Policy | Tofunmi's Fashion Home",
+  title: "Privacy Policy | SimplyBukky",
 };
 
 export default function PrivacyPage() {
