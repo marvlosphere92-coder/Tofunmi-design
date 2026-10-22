@@ -3,8 +3,14 @@
 import { useState } from "react";
 import { CldUploadButton } from "next-cloudinary";
 
-export function SinglePhotoUploadField({ name = "photoUrl" }: { name?: string }) {
-  const [photo, setPhoto] = useState<string | null>(null);
+export function SinglePhotoUploadField({
+  name = "photoUrl",
+  initialPhoto = null,
+}: {
+  name?: string;
+  initialPhoto?: string | null;
+}) {
+  const [photo, setPhoto] = useState<string | null>(initialPhoto);
 
   return (
     <div className="space-y-2">

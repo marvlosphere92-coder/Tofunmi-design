@@ -2,8 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { SubmitButton } from "@/components/SubmitButton";
 import { SinglePhotoUploadField } from "@/components/SinglePhotoUploadField";
 import { ConfirmDeleteForm } from "@/components/ConfirmDeleteForm";
-import { StarRating } from "@/components/StarRating";
-import { createAdminReview, toggleReviewPublished, deleteReview } from "./actions";
+import { createAdminReview, updateReview, toggleReviewPublished, deleteReview } from "./actions";
 import type { Design, Review } from "@/types/db";
 
 export default async function AdminReviewsPage() {
@@ -62,21 +61,51 @@ export default async function AdminReviewsPage() {
         <h2 className="font-serif text-xl mb-4">All reviews</h2>
         <div className="space-y-2">
           {list.map((r) => (
-            <div
-              key={r.id}
-              className="rounded-lg border border-accent-soft p-4 flex flex-wrap items-center justify-between gap-3"
-            >
-              <div>
-                <p className="font-medium">
-                  {r.reviewer_name}{" "}
-                  <span className="text-xs text-foreground/50">
-                    · {r.source === "admin" ? "added by admin" : "from a buyer"} ·{" "}
-                    {r.published ? "published" : "hidden"}
-                  </span>
-                </p>
-                <StarRating rating={r.rating} className="text-sm" />
-                {r.body && <p className="text-sm text-foreground/70 mt-1">{r.body}</p>}
-              </div>
+            <div key={r.id} className="rounded-lg border border-accent-soft p-4 space-y-3">
+              <p className="text-xs text-foreground/50">
+                {r.source === "admin" ? "Added by admin" : "From a buyer"} ·{" "}
+                {r.published ? "Published" : "Hidden"} · {new Date(r.created_at).toLocaleDateString()}
+              </p>
+              <form action={updateReview} className="flex flex-wrap items-end gap-2">
+                <input type="hidden" name="reviewId" value={r.id} />
+                <label className="text-xs text-foreground/60">
+                  Name
+                  <input
+                    name="reviewerName"
+                    defaultValue={r.reviewer_name}
+                    className="block rounded-md border border-accent-soft px-2 py-1 text-sm mt-1"
+                  />
+                </label>
+                <label className="text-xs text-foreground/60">
+                  Rating
+                  <select
+                    key={r.rating}
+                    name="rating"
+                    defaultValue={r.rating}
+                    className="block rounded-md border border-accent-soft px-2 py-1 text-sm mt-1"
+                  >
+                    {[5, 4, 3, 2, 1].map((n) => (
+                      <option key={n} value={n}>
+                        {n} star{n === 1 ? "" : "s"}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="text-xs text-foreground/60 flex-1 min-w-[200px]">
+                  What they said
+                  <input
+                    name="body"
+                    defaultValue={r.body ?? ""}
+                    className="block w-full rounded-md border border-accent-soft px-2 py-1 text-sm mt-1"
+                  />
+                </label>
+                <SubmitButton
+                  className="rounded-full border border-accent-soft px-4 py-1 text-sm"
+                  pendingText="Saving…"
+                >
+                  Save
+                </SubmitButton>
+              </form>
               <div className="flex items-center gap-4">
                 <form action={toggleReviewPublished}>
                   <input type="hidden" name="reviewId" value={r.id} />

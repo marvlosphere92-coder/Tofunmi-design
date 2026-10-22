@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 
 export function EmailSignInForm() {
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error" | "rate_limited">("idle");
 
   if (status === "sent") {
     return <p className="text-sm text-foreground/70">Check your email for a sign-in link.</p>;
@@ -21,7 +21,13 @@ export function EmailSignInForm() {
           email,
           options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
         });
-        setStatus(error ? "error" : "sent");
+        if (!error) {
+          setStatus("sent");
+        } else if (error.status === 429) {
+          setStatus("rate_limited");
+        } else {
+          setStatus("error");
+        }
       }}
       className="flex flex-col gap-2"
     >
@@ -42,6 +48,11 @@ export function EmailSignInForm() {
       </button>
       {status === "error" && (
         <p className="text-sm text-red-700">Something went wrong. Try again.</p>
+      )}
+      {status === "rate_limited" && (
+        <p className="text-sm text-red-700">
+          Too many attempts — please wait a minute before trying again.
+        </p>
       )}
     </form>
   );

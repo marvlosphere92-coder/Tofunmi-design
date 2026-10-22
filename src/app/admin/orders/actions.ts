@@ -37,6 +37,8 @@ export async function updateOrderDetails(formData: FormData) {
   const orderId = String(formData.get("orderId"));
   const eventDate = String(formData.get("eventDate") || "") || null;
   const budgetNote = String(formData.get("budgetNote") || "") || null;
+  const estimatedPrice = formData.get("estimatedPrice") ? Number(formData.get("estimatedPrice")) : null;
+  const finalPrice = formData.get("finalPrice") ? Number(formData.get("finalPrice")) : null;
 
   const { data: order } = await supabase
     .from("orders")
@@ -46,7 +48,12 @@ export async function updateOrderDetails(formData: FormData) {
 
   await supabase
     .from("orders")
-    .update({ event_date: eventDate, budget_note: budgetNote })
+    .update({
+      event_date: eventDate,
+      budget_note: budgetNote,
+      estimated_price: estimatedPrice,
+      final_price: finalPrice,
+    })
     .eq("id", orderId);
 
   const client = order?.clients as unknown as { full_name: string; email: string | null } | null;

@@ -58,3 +58,37 @@ export async function submitBuyerReview(formData: FormData) {
   revalidatePath("/");
   revalidatePath("/reviews");
 }
+
+export async function updateBuyerReview(formData: FormData) {
+  const session = await createClient();
+  const { data: userData } = await session.auth.getUser();
+  if (!userData.user) throw new Error("Not signed in.");
+
+  const supabase = createServiceClient();
+  const reviewId = String(formData.get("reviewId"));
+  const rating = Number(formData.get("rating"));
+  const body = String(formData.get("body") || "").trim() || null;
+  const photoUrl = String(formData.get("photoUrl") || "") || null;
+
+  if (!rating) throw new Error("A rating is required.");
+
+  // Only let this customer edit a review that's actually theirs.
+  const { data: review } = await supabase
+    .from("reviews")
+    .select("id, client_id, clients(user_id)")
+    .eq("id", reviewId)
+    .single();
+  const reviewClient = review?.clients as unknown as { user_id: string | null } | null;
+  if (!review || reviewClient?.user_id !== userData.user.id) {
+    throw new Error("You can only edit your own review.");
+  }
+
+  await supabase
+    .from("reviews")
+    .update({ rating, body, photo_url: photoUrl })
+    .eq("id", reviewId);
+
+  revalidatePath("/account");
+  revalidatePath("/");
+  revalidatePath("/reviews");
+}

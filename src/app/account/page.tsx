@@ -4,9 +4,9 @@ import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { GoogleSignInButton } from "@/components/GoogleSignInButton";
 import { EmailSignInForm } from "@/components/EmailSignInForm";
 import { SubmitButton } from "@/components/SubmitButton";
-import { StarRating } from "@/components/StarRating";
 import { SinglePhotoUploadField } from "@/components/SinglePhotoUploadField";
-import { signOutCustomer, submitBuyerReview } from "./actions";
+import { EditableBuyerReview } from "@/components/EditableBuyerReview";
+import { signOutCustomer, submitBuyerReview, updateBuyerReview } from "./actions";
 import { ORDER_STATUS_LABELS, ORDER_STATUS_SEQUENCE } from "@/types/db";
 import type { Client, Review } from "@/types/db";
 
@@ -49,7 +49,7 @@ export default async function AccountPage() {
     ? await supabase
         .from("orders")
         .select(
-          "id, reference, status, event_date, created_at, designs(title, cover_photo_url), order_status_events(status, created_at)"
+          "id, reference, status, event_date, created_at, estimated_price, final_price, designs(title, cover_photo_url), order_status_events(status, created_at)"
         )
         .eq("client_id", c.id)
         .order("created_at", { ascending: false })
@@ -103,6 +103,13 @@ export default async function AccountPage() {
                         ? `Delivery date: ${new Date(o.event_date).toLocaleDateString()}`
                         : "No delivery date set yet"}
                     </p>
+                    <p className="text-sm text-foreground/60">
+                      {o.final_price != null
+                        ? `Price: ₦${o.final_price.toLocaleString()}`
+                        : o.estimated_price != null
+                        ? `Estimated price: ₦${o.estimated_price.toLocaleString()}`
+                        : "Price to be confirmed on WhatsApp"}
+                    </p>
                   </div>
                 </div>
 
@@ -135,15 +142,7 @@ export default async function AccountPage() {
                 {o.status === "completed" && (
                   <div className="mt-5 border-t border-accent-soft pt-4">
                     {reviewsByOrder.has(o.id) ? (
-                      <div>
-                        <p className="text-sm font-medium mb-1">Your review</p>
-                        <StarRating rating={reviewsByOrder.get(o.id)!.rating} className="text-sm" />
-                        {reviewsByOrder.get(o.id)!.body && (
-                          <p className="mt-1 text-sm text-foreground/70">
-                            {reviewsByOrder.get(o.id)!.body}
-                          </p>
-                        )}
-                      </div>
+                      <EditableBuyerReview review={reviewsByOrder.get(o.id)!} action={updateBuyerReview} />
                     ) : (
                       <form action={submitBuyerReview} className="space-y-2">
                         <input type="hidden" name="orderId" value={o.id} />

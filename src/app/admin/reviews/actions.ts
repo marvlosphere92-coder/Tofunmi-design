@@ -31,6 +31,25 @@ export async function createAdminReview(formData: FormData) {
   revalidatePath("/reviews");
 }
 
+export async function updateReview(formData: FormData) {
+  const supabase = createServiceClient();
+  const id = String(formData.get("reviewId"));
+
+  const reviewerName = String(formData.get("reviewerName") || "").trim();
+  const rating = Number(formData.get("rating"));
+  const body = String(formData.get("body") || "").trim() || null;
+
+  if (!reviewerName || !rating) {
+    throw new Error("Name and rating are required.");
+  }
+
+  await supabase.from("reviews").update({ reviewer_name: reviewerName, rating, body }).eq("id", id);
+
+  revalidatePath("/admin/reviews");
+  revalidatePath("/");
+  revalidatePath("/reviews");
+}
+
 export async function toggleReviewPublished(formData: FormData) {
   const supabase = createServiceClient();
   const id = String(formData.get("reviewId"));

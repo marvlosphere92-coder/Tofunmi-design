@@ -38,9 +38,11 @@ export default async function AdminDashboard() {
     return acc;
   }, {});
 
-  const revenue = orders
-    .filter((o) => o.status === "completed" && o.final_price != null)
+  const completedOrders = orders.filter((o) => o.status === "completed");
+  const revenue = completedOrders
+    .filter((o) => o.final_price != null)
     .reduce((sum, o) => sum + Number(o.final_price), 0);
+  const completedWithoutPrice = completedOrders.filter((o) => o.final_price == null).length;
 
   const designCounts = new Map<string, number>();
   for (const o of orders) {
@@ -82,6 +84,16 @@ export default async function AdminDashboard() {
             <p className="text-2xl font-medium">₦{revenue.toLocaleString()}</p>
           </div>
         </div>
+
+        {completedWithoutPrice > 0 && (
+          <Link
+            href="/admin/orders"
+            className="block text-sm text-red-700 bg-red-50 rounded-md px-3 py-2 mb-4 transition hover:opacity-80"
+          >
+            {completedWithoutPrice} completed order{completedWithoutPrice === 1 ? "" : "s"} have no
+            final price set, so revenue above is understated. Add prices on the Orders page →
+          </Link>
+        )}
 
         <div className="grid sm:grid-cols-2 gap-6">
           <div>

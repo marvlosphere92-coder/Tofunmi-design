@@ -62,7 +62,7 @@ export default async function DesignDetailPage({
           <h1 className="font-serif text-3xl mt-1">{design.title}</h1>
           <p className="mt-4 text-foreground/70">{design.description}</p>
 
-          {(design.labour_price != null || design.estimated_yards) && (
+          {design.labour_price != null || design.estimated_yards ? (
             <p className="mt-6 text-lg">
               {design.labour_price != null && (
                 <>
@@ -72,6 +72,10 @@ export default async function DesignDetailPage({
               )}
               {design.labour_price != null && design.estimated_yards ? " · " : ""}
               {design.estimated_yards ? `~${design.estimated_yards} yards` : ""}
+            </p>
+          ) : (
+            <p className="mt-6 text-lg text-foreground/60">
+              Price on request — message us on WhatsApp for a quote.
             </p>
           )}
 

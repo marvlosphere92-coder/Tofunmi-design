@@ -29,11 +29,11 @@ export function DesignCard({ design, index = 0 }: { design: Design; index?: numb
           )}
         </motion.div>
         <p className="mt-2 text-sm">{design.title}</p>
-        {design.labour_price != null && (
-          <p className="text-xs text-foreground/60">
-            From ₦{design.labour_price.toLocaleString()}
-          </p>
-        )}
+        <p className="text-xs text-foreground/60">
+          {design.labour_price != null
+            ? `From ₦${design.labour_price.toLocaleString()}`
+            : "Price on request"}
+        </p>
       </Link>
     </motion.div>
   );
