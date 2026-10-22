@@ -74,6 +74,9 @@ export default async function Home() {
 
         {featured.length > 0 && (
           <section className="mx-auto max-w-6xl px-6 py-16">
+            <p className="text-center text-xs uppercase tracking-[0.2em] text-accent mb-2">
+              Fresh off the machine
+            </p>
             <h2 className="font-serif text-2xl mb-8 text-center">From the lookbook</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {featured.map((d, i) => (
@@ -81,7 +84,10 @@ export default async function Home() {
               ))}
             </div>
             <FadeIn className="text-center mt-10">
-              <Link href="/designs" className="text-sm underline transition hover:opacity-70">
+              <Link
+                href="/designs"
+                className="inline-block rounded-full border border-accent text-accent px-6 py-2.5 text-sm transition hover:bg-accent hover:text-white"
+              >
                 See the full lookbook
               </Link>
             </FadeIn>
@@ -89,14 +95,19 @@ export default async function Home() {
         )}
 
         {recentReviews.length > 0 && (
-          <section className="mx-auto max-w-6xl px-6 pb-16">
-            <h2 className="font-serif text-2xl mb-8 text-center">What our clients say</h2>
-            <ReviewsGrid reviews={recentReviews} />
-            <FadeIn className="text-center mt-10">
-              <Link href="/reviews" className="text-sm underline transition hover:opacity-70">
-                Read all reviews
-              </Link>
-            </FadeIn>
+          <section className="bg-gold-soft/60 py-16">
+            <div className="mx-auto max-w-6xl px-6">
+              <p className="text-center text-xs uppercase tracking-[0.2em] text-accent mb-2">
+                Loved by clients
+              </p>
+              <h2 className="font-serif text-2xl mb-8 text-center">What our clients say</h2>
+              <ReviewsGrid reviews={recentReviews} />
+              <FadeIn className="text-center mt-10">
+                <Link href="/reviews" className="text-sm underline transition hover:opacity-70">
+                  Read all reviews
+                </Link>
+              </FadeIn>
+            </div>
           </section>
         )}
       </main>

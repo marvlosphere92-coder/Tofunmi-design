@@ -26,8 +26,8 @@ export default async function ReviewsPage() {
       <main className="flex-1 mx-auto max-w-4xl px-6 py-16 w-full">
         <h1 className="font-serif text-2xl mb-2">Reviews</h1>
         {average && (
-          <p className="text-sm text-foreground/60 mb-8">
-            {average} average · {reviews.length} review{reviews.length === 1 ? "" : "s"}
+          <p className="inline-block text-sm bg-gold-soft text-foreground/80 rounded-full px-3 py-1 mb-8">
+            ★ {average} average · {reviews.length} review{reviews.length === 1 ? "" : "s"}
           </p>
         )}
         <ReviewsGrid reviews={reviews} />

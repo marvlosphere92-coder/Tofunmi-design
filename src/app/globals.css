@@ -6,6 +6,9 @@
   --accent: #c98a94; /* dusty rose */
   --accent-soft: #f1dfd8; /* champagne/blush */
   --surface: #ffffff;
+  --plum: #3a2a30; /* deep plum, used as a solid band background */
+  --gold: #c9974a; /* warm gold, secondary accent for highlights */
+  --gold-soft: #f3e6ce; /* soft gold tint for backgrounds */
 }
 
 @theme inline {
@@ -14,6 +17,9 @@
   --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
   --color-surface: var(--surface);
+  --color-plum: var(--plum);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
   --font-sans: var(--font-body);
   --font-serif: var(--font-heading);
 }

@@ -9,7 +9,7 @@ export function ReviewsGrid({ reviews }: { reviews: Review[] }) {
   return (
     <div className="grid sm:grid-cols-2 gap-4">
       {reviews.map((r) => (
-        <div key={r.id} className="rounded-lg border border-accent-soft p-5">
+        <div key={r.id} className="rounded-lg bg-surface shadow-sm p-5">
           <StarRating rating={r.rating} />
           {r.body && <p className="mt-2 text-sm text-foreground/80 leading-relaxed">{r.body}</p>}
           {r.photo_url && (

@@ -9,12 +9,12 @@ const stats = [
 export function StatsStrip() {
   return (
     <FadeIn>
-      <section className="border-y border-accent-soft">
+      <section className="bg-plum text-white">
         <div className="mx-auto max-w-6xl px-6 py-10 grid grid-cols-3 gap-4 text-center">
           {stats.map((s) => (
             <div key={s.label}>
-              <p className="font-serif text-2xl md:text-3xl">{s.value}</p>
-              <p className="text-xs md:text-sm text-foreground/60 mt-1">{s.label}</p>
+              <p className="font-serif text-2xl md:text-3xl text-gold-soft">{s.value}</p>
+              <p className="text-xs md:text-sm text-white/70 mt-1">{s.label}</p>
             </div>
           ))}
         </div>
