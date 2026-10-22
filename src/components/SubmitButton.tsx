@@ -17,7 +17,7 @@ export function SubmitButton({
       type="submit"
       disabled={pending || disabled}
       aria-busy={pending}
-      className={`${className ?? ""} transition hover:opacity-80 active:scale-95 active:opacity-100 disabled:opacity-60 disabled:cursor-not-allowed disabled:active:scale-100 disabled:hover:opacity-60`}
+      className={`${className ?? ""} transition hover:opacity-80 hover:-translate-y-0.5 active:scale-95 active:translate-y-0 active:opacity-100 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:active:scale-100 disabled:hover:opacity-60`}
       {...props}
     >
       {pending ? pendingText : children}

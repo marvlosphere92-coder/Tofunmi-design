@@ -39,7 +39,10 @@ export default async function WaitlistPage({
             className="w-full rounded-md border border-accent-soft px-3 py-2"
             rows={3}
           />
-          <SubmitButton className="w-full rounded-full bg-accent text-white py-3" pendingText="Joining…">
+          <SubmitButton
+            className="w-full rounded-full bg-accent text-white py-3 shadow-sm hover:shadow-lg"
+            pendingText="Joining…"
+          >
             Join waitlist
           </SubmitButton>
         </form>

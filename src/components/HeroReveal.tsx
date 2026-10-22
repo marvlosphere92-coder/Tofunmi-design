@@ -37,7 +37,7 @@ export function HeroReveal({
       >
         <Link
           href={cta.href}
-          className="mt-8 inline-block rounded-full bg-white/95 text-foreground px-8 py-3 hover:bg-white transition active:scale-95"
+          className="mt-8 inline-block rounded-full bg-white/95 text-foreground px-8 py-3 shadow-md hover:bg-white hover:shadow-xl hover:-translate-y-0.5 transition active:scale-95"
         >
           {cta.label}
         </Link>

@@ -27,7 +27,7 @@ export default async function OrderConfirmationPage({
           href={`https://wa.me/${whatsappNumber}?text=${text}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-8 inline-block rounded-full bg-accent text-white px-8 py-3 transition hover:opacity-90 active:scale-95"
+          className="mt-8 inline-block rounded-full bg-accent text-white px-8 py-3 shadow-sm transition hover:opacity-90 hover:shadow-lg hover:-translate-y-0.5 active:scale-95"
         >
           Message us on WhatsApp now
         </a>

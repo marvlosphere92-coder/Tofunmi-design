@@ -18,7 +18,7 @@ export function GoogleSignInButton({ className }: { className?: string }) {
           options: { redirectTo: `${window.location.origin}/auth/callback` },
         });
       }}
-      className={`${className ?? ""} transition hover:opacity-80 active:scale-95 disabled:opacity-60`}
+      className={`${className ?? ""} shadow-sm transition hover:opacity-90 hover:shadow-lg hover:-translate-y-0.5 active:scale-95 active:translate-y-0 disabled:opacity-60 disabled:hover:translate-y-0`}
     >
       {pending ? "Redirecting…" : "Sign in with Google"}
     </button>

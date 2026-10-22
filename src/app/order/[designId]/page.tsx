@@ -136,7 +136,7 @@ export default async function OrderPage({
           </fieldset>
 
           <SubmitButton
-            className="w-full rounded-full bg-accent text-white py-3"
+            className="w-full rounded-full bg-accent text-white py-3 shadow-sm hover:shadow-lg"
             pendingText="Sending…"
           >
             Send request

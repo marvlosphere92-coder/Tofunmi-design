@@ -25,7 +25,7 @@ export function EditorialBreak() {
           </p>
           <Link
             href="/designs"
-            className="mt-5 inline-block rounded-full border border-white/70 text-white px-6 py-2.5 hover:bg-white hover:text-foreground transition active:scale-95"
+            className="mt-5 inline-block rounded-full border border-white/70 text-white px-6 py-2.5 hover:bg-white hover:text-foreground hover:shadow-lg hover:-translate-y-0.5 transition active:scale-95"
           >
             Explore the lookbook
           </Link>

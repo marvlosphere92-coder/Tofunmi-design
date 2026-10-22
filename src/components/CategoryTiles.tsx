@@ -38,7 +38,7 @@ export function CategoryTiles() {
               transition={{ duration: 0.55, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
             >
               <Link href={`/designs?category=${t.category}`} className="group block relative">
-                <div className="aspect-[4/5] overflow-hidden rounded-lg">
+                <div className="aspect-[4/5] overflow-hidden rounded-lg shadow-sm transition-shadow duration-300 group-hover:shadow-xl">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={t.image}
@@ -47,8 +47,11 @@ export function CategoryTiles() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/0 to-black/0" />
                 </div>
-                <span className="absolute bottom-4 left-4 font-serif text-xl text-white">
+                <span className="absolute bottom-4 left-4 font-serif text-xl text-white flex items-center gap-1">
                   {t.label}
+                  <span className="opacity-0 -translate-x-1 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0">
+                    →
+                  </span>
                 </span>
               </Link>
             </motion.div>
