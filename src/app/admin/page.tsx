@@ -90,8 +90,9 @@ export default async function AdminDashboard() {
             href="/admin/orders"
             className="block text-sm text-red-700 bg-red-50 rounded-md px-3 py-2 mb-4 transition hover:opacity-80"
           >
-            {completedWithoutPrice} completed order{completedWithoutPrice === 1 ? "" : "s"} have no
-            final price set, so revenue above is understated. Add prices on the Orders page →
+            {completedWithoutPrice} completed order{completedWithoutPrice === 1 ? "" : "s"}{" "}
+            {completedWithoutPrice === 1 ? "has" : "have"} no final price set, so revenue above is
+            understated. Add prices on the Orders page →
           </Link>
         )}
 
