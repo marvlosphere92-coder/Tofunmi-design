@@ -35,27 +35,62 @@ export function SiteFooter() {
   const phone = whatsappNumber ? `+${whatsappNumber}` : null;
 
   return (
-    <footer className="border-t border-accent-soft mt-16 py-8 text-center text-sm text-foreground/70">
-      <p>&copy; {new Date().getFullYear()} SimplyBukky. Made by hand, one piece at a time.</p>
-      {(email || phone) && (
-        <p className="mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
-          {email && (
-            <a href={`mailto:${email}`} className="transition hover:opacity-70">
-              {email}
-            </a>
-          )}
-          {phone && (
-            <a href={`tel:${phone}`} className="transition hover:opacity-70">
-              {phone}
-            </a>
-          )}
-        </p>
-      )}
-      <p className="mt-2">
-        <Link href="/privacy" className="underline transition hover:opacity-70">
-          Privacy Policy
-        </Link>
-      </p>
+    <footer className="border-t border-accent-soft mt-16 bg-accent-soft/20">
+      <div className="mx-auto max-w-6xl px-6 py-12 grid gap-10 sm:grid-cols-3 text-sm">
+        <div>
+          <p className="font-serif text-xl tracking-wide">SimplyBukky</p>
+          <p className="mt-2 text-foreground/60">
+            Bespoke fashion, made by hand — one piece at a time.
+          </p>
+        </div>
+        <div>
+          <p className="font-medium text-foreground/80 mb-3">Explore</p>
+          <ul className="space-y-2 text-foreground/60">
+            <li>
+              <Link href="/designs" className="transition hover:opacity-70">
+                Lookbook
+              </Link>
+            </li>
+            <li>
+              <Link href="/reviews" className="transition hover:opacity-70">
+                Reviews
+              </Link>
+            </li>
+            <li>
+              <Link href="/about" className="transition hover:opacity-70">
+                About
+              </Link>
+            </li>
+            <li>
+              <Link href="/privacy" className="transition hover:opacity-70">
+                Privacy Policy
+              </Link>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <p className="font-medium text-foreground/80 mb-3">Get in touch</p>
+          <ul className="space-y-2 text-foreground/60">
+            {email && (
+              <li>
+                <a href={`mailto:${email}`} className="transition hover:opacity-70">
+                  {email}
+                </a>
+              </li>
+            )}
+            {phone && (
+              <li>
+                <a href={`tel:${phone}`} className="transition hover:opacity-70">
+                  {phone}
+                </a>
+              </li>
+            )}
+          </ul>
+        </div>
+      </div>
+      <div className="border-t border-accent-soft py-4 text-center text-xs text-foreground/50">
+        &copy; {new Date().getFullYear()} SimplyBukky. All rights reserved.
+      </div>
     </footer>
   );
 }
