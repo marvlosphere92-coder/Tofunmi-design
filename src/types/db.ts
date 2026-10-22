@@ -116,3 +116,17 @@ export interface Order {
   status: OrderStatus;
   created_at: string;
 }
+
+export interface Review {
+  id: string;
+  client_id: string | null;
+  order_id: string | null;
+  design_id: string | null;
+  reviewer_name: string;
+  rating: number;
+  body: string | null;
+  photo_url: string | null;
+  source: "buyer" | "admin";
+  published: boolean;
+  created_at: string;
+}

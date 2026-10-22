@@ -4,9 +4,11 @@ import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { GoogleSignInButton } from "@/components/GoogleSignInButton";
 import { EmailSignInForm } from "@/components/EmailSignInForm";
 import { SubmitButton } from "@/components/SubmitButton";
-import { signOutCustomer } from "./actions";
+import { StarRating } from "@/components/StarRating";
+import { SinglePhotoUploadField } from "@/components/SinglePhotoUploadField";
+import { signOutCustomer, submitBuyerReview } from "./actions";
 import { ORDER_STATUS_LABELS, ORDER_STATUS_SEQUENCE } from "@/types/db";
-import type { Client } from "@/types/db";
+import type { Client, Review } from "@/types/db";
 
 export default async function AccountPage() {
   const supabase = await createClient();
@@ -52,6 +54,11 @@ export default async function AccountPage() {
         .eq("client_id", c.id)
         .order("created_at", { ascending: false })
     : { data: null };
+
+  const { data: myReviews } = c
+    ? await supabase.from("reviews").select("*").eq("client_id", c.id)
+    : { data: null };
+  const reviewsByOrder = new Map((myReviews ?? []).map((r) => [r.order_id, r as Review]));
 
   return (
     <>
@@ -123,6 +130,52 @@ export default async function AccountPage() {
                     Last updated{" "}
                     {new Date(events[events.length - 1].created_at).toLocaleDateString()}
                   </p>
+                )}
+
+                {o.status === "completed" && (
+                  <div className="mt-5 border-t border-accent-soft pt-4">
+                    {reviewsByOrder.has(o.id) ? (
+                      <div>
+                        <p className="text-sm font-medium mb-1">Your review</p>
+                        <StarRating rating={reviewsByOrder.get(o.id)!.rating} className="text-sm" />
+                        {reviewsByOrder.get(o.id)!.body && (
+                          <p className="mt-1 text-sm text-foreground/70">
+                            {reviewsByOrder.get(o.id)!.body}
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <form action={submitBuyerReview} className="space-y-2">
+                        <input type="hidden" name="orderId" value={o.id} />
+                        <p className="text-sm font-medium">Leave a review</p>
+                        <select
+                          name="rating"
+                          required
+                          defaultValue="5"
+                          className="rounded-md border border-accent-soft px-3 py-2 text-sm"
+                        >
+                          {[5, 4, 3, 2, 1].map((n) => (
+                            <option key={n} value={n}>
+                              {n} star{n === 1 ? "" : "s"}
+                            </option>
+                          ))}
+                        </select>
+                        <textarea
+                          name="body"
+                          placeholder="How was it?"
+                          className="w-full rounded-md border border-accent-soft px-3 py-2 text-sm"
+                          rows={2}
+                        />
+                        <SinglePhotoUploadField />
+                        <SubmitButton
+                          className="rounded-full bg-accent text-white px-5 py-2 text-sm"
+                          pendingText="Submitting…"
+                        >
+                          Submit review
+                        </SubmitButton>
+                      </form>
+                    )}
+                  </div>
                 )}
               </div>
             );

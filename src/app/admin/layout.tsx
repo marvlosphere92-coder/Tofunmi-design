@@ -23,6 +23,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <Link href="/admin/materials" className="transition hover:opacity-70">Materials</Link>
             <Link href="/admin/clients" className="transition hover:opacity-70">Clients</Link>
             <Link href="/admin/waitlist" className="transition hover:opacity-70">Waitlist</Link>
+            <Link href="/admin/reviews" className="transition hover:opacity-70">Reviews</Link>
             <Link href="/admin/account" className="transition hover:opacity-70">Account</Link>
           </div>
           <form action={signOut}>

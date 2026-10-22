@@ -7,12 +7,13 @@ import { FadeIn } from "@/components/FadeIn";
 import { CategoryTiles } from "@/components/CategoryTiles";
 import { StatsStrip } from "@/components/StatsStrip";
 import { EditorialBreak } from "@/components/EditorialBreak";
-import type { CapacitySettings, Design } from "@/types/db";
+import { ReviewsGrid } from "@/components/ReviewsGrid";
+import type { CapacitySettings, Design, Review } from "@/types/db";
 
 export default async function Home() {
   const supabase = await createClient();
 
-  const [{ data: designs }, { data: capacity }] = await Promise.all([
+  const [{ data: designs }, { data: capacity }, { data: reviews }] = await Promise.all([
     supabase
       .from("designs")
       .select("*")
@@ -20,10 +21,17 @@ export default async function Home() {
       .order("display_order", { ascending: true })
       .limit(8),
     supabase.from("capacity_settings").select("*").single(),
+    supabase
+      .from("reviews")
+      .select("*")
+      .eq("published", true)
+      .order("created_at", { ascending: false })
+      .limit(4),
   ]);
 
   const featured = (designs ?? []) as Design[];
   const cap = capacity as CapacitySettings | null;
+  const recentReviews = (reviews ?? []) as Review[];
 
   return (
     <>
@@ -75,6 +83,18 @@ export default async function Home() {
             <FadeIn className="text-center mt-10">
               <Link href="/designs" className="text-sm underline transition hover:opacity-70">
                 See the full lookbook
+              </Link>
+            </FadeIn>
+          </section>
+        )}
+
+        {recentReviews.length > 0 && (
+          <section className="mx-auto max-w-6xl px-6 pb-16">
+            <h2 className="font-serif text-2xl mb-8 text-center">What our clients say</h2>
+            <ReviewsGrid reviews={recentReviews} />
+            <FadeIn className="text-center mt-10">
+              <Link href="/reviews" className="text-sm underline transition hover:opacity-70">
+                Read all reviews
               </Link>
             </FadeIn>
           </section>

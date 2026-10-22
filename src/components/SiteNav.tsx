@@ -17,6 +17,7 @@ export async function SiteNav() {
         </Link>
         <div className="flex gap-4 sm:gap-6 text-sm">
           <Link href="/designs" className={navLinkClass}>Lookbook</Link>
+          <Link href="/reviews" className={navLinkClass}>Reviews</Link>
           <Link href="/about" className={navLinkClass}>About</Link>
           <Link href="/about#faq" className={navLinkClass}>FAQ</Link>
           <Link href="/account" className={navLinkClass}>

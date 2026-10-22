@@ -116,6 +116,28 @@ create table waitlist_entries (
   created_at timestamptz not null default now()
 );
 
+-- Reviews: either left by a signed-in buyer against one of their own
+-- completed orders, or entered by the admin for a client who ordered
+-- through WhatsApp/offline. Optionally tied to a design so it can also
+-- show on that design's page, independent of showing site-wide.
+create table reviews (
+  id uuid primary key default gen_random_uuid(),
+  client_id uuid references clients (id) on delete set null,
+  order_id uuid references orders (id) on delete set null,
+  design_id uuid references designs (id) on delete set null,
+  reviewer_name text not null,
+  rating int not null check (rating between 1 and 5),
+  body text,
+  photo_url text,
+  source text not null check (source in ('buyer', 'admin')),
+  published boolean not null default true,
+  created_at timestamptz not null default now()
+);
+create index reviews_design_idx on reviews (design_id);
+-- One buyer review per order; admin-entered reviews aren't tied to an
+-- order so this doesn't restrict those.
+create unique index reviews_one_per_order on reviews (order_id) where order_id is not null;
+
 -- Simple capacity control she toggles from the admin
 create table capacity_settings (
   id int primary key default 1,
@@ -149,9 +171,15 @@ alter table orders enable row level security;
 alter table order_status_events enable row level security;
 alter table waitlist_entries enable row level security;
 alter table capacity_settings enable row level security;
+alter table reviews enable row level security;
 
 create policy "public can read active designs" on designs
   for select using (active = true);
+
+create policy "public can read published reviews" on reviews
+  for select using (published = true);
+create policy "admin can read all reviews" on reviews
+  for select using (is_admin());
 
 -- The admin dashboard reads inactive/draft designs too (e.g. hidden
 -- designs awaiting her edit), via the anon-key client as her logged-in

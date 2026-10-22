@@ -4,7 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { whatsappOrderLink } from "@/lib/whatsapp";
 import { FadeIn } from "@/components/FadeIn";
-import type { Design } from "@/types/db";
+import { ReviewsGrid } from "@/components/ReviewsGrid";
+import type { Design, Review } from "@/types/db";
 
 export default async function DesignDetailPage({
   params,
@@ -13,12 +14,21 @@ export default async function DesignDetailPage({
 }) {
   const { id } = await params;
   const supabase = await createClient();
-  const { data } = await supabase.from("designs").select("*").eq("id", id).single();
+  const [{ data }, { data: reviewsData }] = await Promise.all([
+    supabase.from("designs").select("*").eq("id", id).single(),
+    supabase
+      .from("reviews")
+      .select("*")
+      .eq("design_id", id)
+      .eq("published", true)
+      .order("created_at", { ascending: false }),
+  ]);
 
   if (!data) notFound();
   const design = data as Design;
   const photos = design.photos?.length ? design.photos : [design.cover_photo_url].filter(Boolean);
   const videos = design.videos ?? [];
+  const reviews = (reviewsData ?? []) as Review[];
 
   return (
     <>
@@ -83,6 +93,14 @@ export default async function DesignDetailPage({
           </div>
         </FadeIn>
       </main>
+
+      {reviews.length > 0 && (
+        <section className="mx-auto max-w-5xl px-6 pb-16">
+          <h2 className="font-serif text-xl mb-4">Reviews for this design</h2>
+          <ReviewsGrid reviews={reviews} />
+        </section>
+      )}
+
       <SiteFooter />
     </>
   );
