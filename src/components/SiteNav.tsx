@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { whatsappGeneralLink } from "@/lib/whatsapp";
+import { Avatar } from "@/components/Avatar";
 
 const navLinkClass =
   "relative after:absolute after:left-0 after:-bottom-1 after:h-px after:w-0 after:bg-accent after:transition-all after:duration-300 hover:text-accent hover:after:w-full";
@@ -45,6 +46,10 @@ export async function SiteNav() {
   const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
   const isCustomer = data.user && data.user.app_metadata?.role !== "admin";
+  const displayName =
+    (data.user?.user_metadata?.full_name as string | undefined) ||
+    (data.user?.user_metadata?.name as string | undefined) ||
+    data.user?.email;
 
   return (
     <header className="border-b border-accent-soft">
@@ -52,10 +57,11 @@ export async function SiteNav() {
         <Link href="/" className="font-serif text-lg sm:text-2xl tracking-wide leading-tight">
           SimplyBukky
         </Link>
-        <div className="flex gap-4 sm:gap-6 text-sm">
+        <div className="flex items-center gap-4 sm:gap-6 text-sm">
           <Link href="/designs" className={navLinkClass}>Lookbook</Link>
           <Link href="/reviews" className={navLinkClass}>Reviews</Link>
-          <Link href="/account" className={navLinkClass}>
+          <Link href="/account" className={`${navLinkClass} flex items-center gap-2`}>
+            {isCustomer && displayName && <Avatar name={displayName} className="w-6 h-6 text-xs" />}
             {isCustomer ? "My orders" : "Sign in"}
           </Link>
         </div>

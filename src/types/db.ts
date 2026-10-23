@@ -117,6 +117,13 @@ export interface Order {
   created_at: string;
 }
 
+export interface SavedDesign {
+  id: string;
+  client_id: string;
+  design_id: string;
+  created_at: string;
+}
+
 export interface Review {
   id: string;
   client_id: string | null;

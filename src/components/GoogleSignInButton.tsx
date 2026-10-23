@@ -42,7 +42,7 @@ async function sha256Hex(value: string) {
     .join("");
 }
 
-export function GoogleSignInButton() {
+export function GoogleSignInButton({ mode = "signin" }: { mode?: "signin" | "signup" }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const [scriptReady, setScriptReady] = useState(false);
@@ -51,6 +51,7 @@ export function GoogleSignInButton() {
   useEffect(() => {
     if (!scriptReady || !window.google || !containerRef.current) return;
     let cancelled = false;
+    containerRef.current.innerHTML = "";
 
     (async () => {
       const rawNonce = crypto.randomUUID() + crypto.randomUUID();
@@ -83,7 +84,7 @@ export function GoogleSignInButton() {
         theme: "outline",
         size: "large",
         shape: "pill",
-        text: "signin_with",
+        text: mode === "signup" ? "signup_with" : "signin_with",
         width: 280,
       });
     })();
@@ -91,7 +92,7 @@ export function GoogleSignInButton() {
     return () => {
       cancelled = true;
     };
-  }, [scriptReady, router]);
+  }, [scriptReady, router, mode]);
 
   return (
     <div className="flex flex-col items-center gap-2">
@@ -101,7 +102,11 @@ export function GoogleSignInButton() {
         onReady={() => setScriptReady(true)}
       />
       <div ref={containerRef} />
-      {status === "signing-in" && <p className="text-sm text-foreground/60">Signing in…</p>}
+      {status === "signing-in" && (
+        <p className="text-sm text-foreground/60">
+          {mode === "signup" ? "Creating your account…" : "Signing in…"}
+        </p>
+      )}
       {status === "error" && (
         <p className="text-sm text-red-700">Something went wrong. Try again.</p>
       )}

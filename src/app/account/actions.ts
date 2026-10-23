@@ -23,6 +23,59 @@ export async function linkSignedInAccount() {
   }
 }
 
+async function getSignedInClient(userId: string) {
+  const supabase = createServiceClient();
+  const { data } = await supabase.from("clients").select("id").eq("user_id", userId).single();
+  return data?.id as string | undefined;
+}
+
+export async function updateProfile(formData: FormData) {
+  const session = await createClient();
+  const { data: userData } = await session.auth.getUser();
+  if (!userData.user) throw new Error("Not signed in.");
+
+  const fullName = String(formData.get("fullName") || "").trim();
+  const phone = String(formData.get("phone") || "").trim() || null;
+  if (!fullName) throw new Error("Name is required.");
+
+  const supabase = createServiceClient();
+  await supabase
+    .from("clients")
+    .update({ full_name: fullName, phone })
+    .eq("user_id", userData.user.id);
+
+  revalidatePath("/account");
+}
+
+export async function toggleSavedDesign(formData: FormData) {
+  const session = await createClient();
+  const { data: userData } = await session.auth.getUser();
+  if (!userData.user) throw new Error("Not signed in.");
+
+  const designId = String(formData.get("designId"));
+  const saved = formData.get("saved") === "true";
+  const clientId = await getSignedInClient(userData.user.id);
+  if (!clientId) throw new Error("No account found for this session.");
+
+  const supabase = createServiceClient();
+  if (saved) {
+    await supabase
+      .from("saved_designs")
+      .delete()
+      .eq("client_id", clientId)
+      .eq("design_id", designId);
+  } else {
+    await supabase
+      .from("saved_designs")
+      .insert({ client_id: clientId, design_id: designId })
+      .select()
+      .single();
+  }
+
+  revalidatePath("/account");
+  revalidatePath(`/designs/${designId}`);
+}
+
 export async function submitBuyerReview(formData: FormData) {
   const session = await createClient();
   const { data: userData } = await session.auth.getUser();

@@ -37,7 +37,7 @@ export function AuthTabs() {
       </p>
 
       <div className="mt-6 flex justify-center">
-        <GoogleSignInButton />
+        <GoogleSignInButton mode={mode} />
       </div>
       <div className="mt-6 max-w-xs mx-auto">
         <p className="text-xs uppercase tracking-wide text-foreground/50 mb-3">Or, without Google</p>

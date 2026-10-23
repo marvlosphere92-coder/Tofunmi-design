@@ -5,6 +5,7 @@ import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { whatsappOrderLink } from "@/lib/whatsapp";
 import { FadeIn } from "@/components/FadeIn";
 import { ReviewsGrid } from "@/components/ReviewsGrid";
+import { SaveDesignButton } from "@/components/SaveDesignButton";
 import type { Design, Review } from "@/types/db";
 
 export default async function DesignDetailPage({
@@ -14,7 +15,7 @@ export default async function DesignDetailPage({
 }) {
   const { id } = await params;
   const supabase = await createClient();
-  const [{ data }, { data: reviewsData }] = await Promise.all([
+  const [{ data }, { data: reviewsData }, { data: userData }] = await Promise.all([
     supabase.from("designs").select("*").eq("id", id).single(),
     supabase
       .from("reviews")
@@ -22,6 +23,7 @@ export default async function DesignDetailPage({
       .eq("design_id", id)
       .eq("published", true)
       .order("created_at", { ascending: false }),
+    supabase.auth.getUser(),
   ]);
 
   if (!data) notFound();
@@ -29,6 +31,19 @@ export default async function DesignDetailPage({
   const photos = design.photos?.length ? design.photos : [design.cover_photo_url].filter(Boolean);
   const videos = design.videos ?? [];
   const reviews = (reviewsData ?? []) as Review[];
+
+  const signedIn = Boolean(userData.user) && userData.user?.app_metadata?.role !== "admin";
+  let initialSaved = false;
+  if (signedIn) {
+    // RLS already scopes saved_designs to rows owned by this signed-in
+    // customer, so a plain filter by design_id is enough here.
+    const { data: savedRow } = await supabase
+      .from("saved_designs")
+      .select("id")
+      .eq("design_id", id)
+      .maybeSingle();
+    initialSaved = Boolean(savedRow);
+  }
 
   return (
     <>
@@ -94,6 +109,9 @@ export default async function DesignDetailPage({
             >
               Ask a quick question on WhatsApp
             </a>
+            <div className="flex justify-center">
+              <SaveDesignButton designId={design.id} initialSaved={initialSaved} signedIn={signedIn} />
+            </div>
           </div>
         </FadeIn>
       </main>

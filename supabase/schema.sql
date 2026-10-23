@@ -138,6 +138,15 @@ create index reviews_design_idx on reviews (design_id);
 -- order so this doesn't restrict those.
 create unique index reviews_one_per_order on reviews (order_id) where order_id is not null;
 
+-- A signed-in customer's saved/wishlisted designs
+create table saved_designs (
+  id uuid primary key default gen_random_uuid(),
+  client_id uuid not null references clients (id) on delete cascade,
+  design_id uuid not null references designs (id) on delete cascade,
+  created_at timestamptz not null default now(),
+  unique (client_id, design_id)
+);
+
 -- Simple capacity control she toggles from the admin
 create table capacity_settings (
   id int primary key default 1,
@@ -172,6 +181,7 @@ alter table order_status_events enable row level security;
 alter table waitlist_entries enable row level security;
 alter table capacity_settings enable row level security;
 alter table reviews enable row level security;
+alter table saved_designs enable row level security;
 
 create policy "public can read active designs" on designs
   for select using (active = true);
@@ -241,3 +251,13 @@ create policy "clients can read own order_status_events" on order_status_events
 
 create policy "admin can read all waitlist_entries" on waitlist_entries
   for select using (is_admin());
+
+create policy "admin can read all saved_designs" on saved_designs
+  for select using (is_admin());
+create policy "clients can read own saved_designs" on saved_designs
+  for select using (
+    exists (
+      select 1 from clients
+      where clients.id = saved_designs.client_id and clients.user_id = auth.uid()
+    )
+  );
