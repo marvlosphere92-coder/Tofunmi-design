@@ -1,12 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fbf6f1; /* ivory */
-  --foreground: #3a2a30; /* deep plum/espresso */
-  --accent: #c98a94; /* dusty rose */
-  --accent-soft: #f1dfd8; /* champagne/blush */
+  /* Emerald & Gold — jewel-toned, premium bespoke-tailor palette.
+     All usable-text/button colors below are WCAG AA checked (>=4.5:1)
+     against --background (or against each other where paired, e.g.
+     white on --accent, --gold-soft on --plum). */
+  --background: #fbf6f1; /* warm ivory */
+  --foreground: #1c2b24; /* near-black deep forest, body text */
+  --accent: #1e6b52; /* deep emerald — primary accent, 5.96:1 on background */
+  --accent-soft: #dceae2; /* soft sage/mint tint for backgrounds */
   --surface: #ffffff;
-  --plum: #3a2a30; /* deep plum, used as a solid band background */
+  --plum: #0f2d22; /* deep forest — solid band backgrounds (stats strip, admin header); name kept for minimal diff, no longer literally plum */
   --gold: #c9974a; /* warm gold, secondary accent for highlights */
   --gold-soft: #f3e6ce; /* soft gold tint for backgrounds */
 }

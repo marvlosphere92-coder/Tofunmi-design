@@ -26,7 +26,7 @@ export default async function ManageOrderPage({
       <SiteNav />
       <main className="flex-1 mx-auto max-w-lg px-6 py-16 w-full">
         <h1 className="font-serif text-2xl">Manage order {order.reference}</h1>
-        <p className="mt-2 text-sm text-foreground/60">
+        <p className="mt-2 text-sm text-foreground/70">
           {design?.title ?? "—"} · status: {order.status.replace(/_/g, " ")}
         </p>
 
@@ -61,7 +61,7 @@ export default async function ManageOrderPage({
           </SubmitButton>
         </form>
 
-        <p className="mt-6 text-xs text-foreground/60">
+        <p className="mt-6 text-xs text-foreground/70">
           For anything else — fabric, pricing, measurements — message us directly on WhatsApp.
         </p>
       </main>

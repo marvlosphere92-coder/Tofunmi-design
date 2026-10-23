@@ -77,7 +77,7 @@ export default async function AccountPage() {
             <Avatar name={c?.full_name || user.email || "?"} className="w-14 h-14 text-xl" />
             <div>
               <h1 className="font-serif text-2xl">Welcome back, {firstName}</h1>
-              <p className="text-sm text-foreground/60 mt-1">{user.email}</p>
+              <p className="text-sm text-foreground/70 mt-1">{user.email}</p>
             </div>
           </div>
           <form action={signOutCustomer}>
@@ -128,12 +128,12 @@ export default async function AccountPage() {
                     <p className="font-medium">
                       {o.reference} — {design?.title ?? "—"}
                     </p>
-                    <p className="text-sm text-foreground/60">
+                    <p className="text-sm text-foreground/70">
                       {o.event_date
                         ? `Delivery date: ${new Date(o.event_date).toLocaleDateString()}`
                         : "No delivery date set yet"}
                     </p>
-                    <p className="text-sm text-foreground/60">
+                    <p className="text-sm text-foreground/70">
                       {o.final_price != null
                         ? `Price: ₦${o.final_price.toLocaleString()}`
                         : o.estimated_price != null
@@ -153,7 +153,7 @@ export default async function AccountPage() {
                         className={`rounded-full px-3 py-1 ${
                           i <= stepIndex
                             ? "bg-accent text-white"
-                            : "bg-accent-soft text-foreground/50"
+                            : "bg-accent-soft text-foreground/70"
                         }`}
                       >
                         {ORDER_STATUS_LABELS[status]}
@@ -163,7 +163,7 @@ export default async function AccountPage() {
                 )}
 
                 {events.length > 0 && (
-                  <p className="mt-3 text-xs text-foreground/50">
+                  <p className="mt-3 text-xs text-foreground/70">
                     Last updated{" "}
                     {new Date(events[events.length - 1].created_at).toLocaleDateString()}
                   </p>
@@ -210,7 +210,7 @@ export default async function AccountPage() {
             );
           })}
           {orderList.length === 0 && (
-            <p className="text-foreground/60">
+            <p className="text-foreground/70">
               No orders yet.{" "}
               <Link href="/designs" className="underline transition hover:opacity-70">
                 Browse the lookbook
@@ -238,7 +238,7 @@ export default async function AccountPage() {
                       )}
                     </div>
                     <p className="mt-2 text-sm">{d.title}</p>
-                    <p className="text-xs text-foreground/60">
+                    <p className="text-xs text-foreground/70">
                       {d.labour_price != null ? `From ₦${d.labour_price.toLocaleString()}` : "Price on request"}
                     </p>
                   </Link>

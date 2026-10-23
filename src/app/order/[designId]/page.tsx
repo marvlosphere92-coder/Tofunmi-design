@@ -3,6 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { submitOrder } from "./actions";
 import { SubmitButton } from "@/components/SubmitButton";
+import { OrderFabricFields } from "@/components/OrderFabricFields";
+import { OrderMeasurementFields } from "@/components/OrderMeasurementFields";
 import type { Design, Material } from "@/types/db";
 
 export default async function OrderPage({
@@ -22,13 +24,18 @@ export default async function OrderPage({
   const d = design as Design;
   const mats = (materials ?? []) as Material[];
 
+  // At least the 2–3 week typical turnaround out from today.
+  const minDeliveryDate = new Date();
+  minDeliveryDate.setDate(minDeliveryDate.getDate() + 14);
+  const minDeliveryDateStr = minDeliveryDate.toISOString().split("T")[0];
+
   return (
     <>
       <SiteNav />
       <main className="flex-1 mx-auto max-w-xl px-6 py-12 w-full">
         <h1 className="font-serif text-2xl">Request: {d.title}</h1>
         {(d.labour_price != null || d.estimated_yards) && (
-          <p className="text-sm text-foreground/60 mt-1">
+          <p className="text-sm text-foreground/70 mt-1">
             {d.labour_price != null ? `Labour from ₦${d.labour_price.toLocaleString()}` : ""}
             {d.labour_price != null && d.estimated_yards ? " · " : ""}
             {d.estimated_yards ? `~${d.estimated_yards} yards` : ""}
@@ -40,99 +47,80 @@ export default async function OrderPage({
 
           <fieldset className="space-y-3">
             <legend className="font-medium">Your details</legend>
-            <input
-              name="fullName"
-              required
-              placeholder="Full name"
-              className="w-full rounded-md border border-accent-soft px-3 py-2"
-            />
-            <input
-              name="phone"
-              required
-              placeholder="Phone (WhatsApp number)"
-              className="w-full rounded-md border border-accent-soft px-3 py-2"
-            />
-            <input
-              name="email"
-              type="email"
-              placeholder="Email (optional)"
-              className="w-full rounded-md border border-accent-soft px-3 py-2"
-            />
+            <label className="block text-sm font-medium" htmlFor="fullName">
+              Full name
+              <input
+                id="fullName"
+                name="fullName"
+                required
+                autoComplete="name"
+                placeholder="e.g. Amaka Okafor"
+                className="block w-full rounded-md border border-accent-soft px-3 py-2 text-base mt-1 font-normal"
+              />
+            </label>
+            <label className="block text-sm font-medium" htmlFor="phone">
+              Phone (WhatsApp number)
+              <input
+                id="phone"
+                name="phone"
+                type="tel"
+                required
+                autoComplete="tel"
+                inputMode="tel"
+                placeholder="e.g. 2348012345678"
+                className="block w-full rounded-md border border-accent-soft px-3 py-2 text-base mt-1 font-normal"
+              />
+            </label>
+            <label className="block text-sm font-medium" htmlFor="email">
+              Email (optional)
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                inputMode="email"
+                placeholder="e.g. amaka@example.com"
+                className="block w-full rounded-md border border-accent-soft px-3 py-2 text-base mt-1 font-normal"
+              />
+            </label>
           </fieldset>
 
           <fieldset className="space-y-3">
             <legend className="font-medium">Fabric</legend>
-            <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" name="ownFabric" id="ownFabric" />
-              I&apos;ll bring my own fabric
-            </label>
-            <select
-              name="materialId"
-              className="w-full rounded-md border border-accent-soft px-3 py-2"
-            >
-              <option value="">Choose a fabric from our catalog</option>
-              {mats.map((m) => (
-                <option key={m.id} value={m.id}>
-                  {m.name} — ₦{m.price_per_yard.toLocaleString()}/yard
-                </option>
-              ))}
-            </select>
-            <p className="text-xs text-foreground/60">
-              Final price depends on exact yardage needed for your size —
-              we&apos;ll confirm before the deposit.
-            </p>
+            <OrderFabricFields materials={mats} />
           </fieldset>
 
           <fieldset className="space-y-3">
             <legend className="font-medium">Measurements</legend>
-            <label className="flex items-center gap-2 text-sm">
-              <input type="radio" name="measurementChoice" value="designer" defaultChecked />
-              We&apos;ll measure you at a fitting
-            </label>
-            <label className="flex items-center gap-2 text-sm">
-              <input type="radio" name="measurementChoice" value="client" />
-              I&apos;ll submit my own measurements now
-            </label>
-
-            <div className="grid grid-cols-2 gap-3 pt-2">
-              {[
-                ["bust", "Bust (in)"],
-                ["waist", "Waist (in)"],
-                ["hip", "Hip (in)"],
-                ["shoulder", "Shoulder (in)"],
-                ["sleeveLength", "Sleeve length (in)"],
-                ["backLength", "Back length (in)"],
-                ["inseam", "Inseam (in)"],
-              ].map(([name, label]) => (
-                <input
-                  key={name}
-                  name={name}
-                  type="number"
-                  step="0.1"
-                  placeholder={label}
-                  className="rounded-md border border-accent-soft px-3 py-2 text-sm"
-                />
-              ))}
-            </div>
+            <OrderMeasurementFields />
           </fieldset>
 
           <fieldset className="space-y-3">
             <legend className="font-medium">Delivery details</legend>
-            <label className="block text-sm text-foreground/70" htmlFor="eventDate">
+            <label className="block text-sm font-medium" htmlFor="eventDate">
               When do you need this ready by? (your delivery date)
+              <input
+                id="eventDate"
+                name="eventDate"
+                type="date"
+                required
+                min={minDeliveryDateStr}
+                className="block w-full rounded-md border border-accent-soft px-3 py-2 text-base mt-1 font-normal"
+              />
             </label>
-            <input
-              id="eventDate"
-              name="eventDate"
-              type="date"
-              className="w-full rounded-md border border-accent-soft px-3 py-2"
-            />
-            <textarea
-              name="budgetNote"
-              placeholder="Anything else — budget, inspiration, special requests"
-              className="w-full rounded-md border border-accent-soft px-3 py-2"
-              rows={3}
-            />
+            <p className="text-xs text-foreground/70">
+              We typically need at least 2–3 weeks to make a piece properly.
+            </p>
+            <label className="block text-sm font-medium" htmlFor="budgetNote">
+              Anything else?
+              <textarea
+                id="budgetNote"
+                name="budgetNote"
+                placeholder="Budget, inspiration, special requests…"
+                className="block w-full rounded-md border border-accent-soft px-3 py-2 text-base mt-1 font-normal"
+                rows={3}
+              />
+            </label>
           </fieldset>
 
           <SubmitButton

@@ -26,14 +26,14 @@ export default async function AdminWaitlistPage() {
             <div>
               <p className="font-medium">
                 {e.full_name}
-                {e.contacted && <span className="ml-2 text-xs text-foreground/50">contacted</span>}
+                {e.contacted && <span className="ml-2 text-xs text-foreground/70">contacted</span>}
               </p>
-              <p className="text-sm text-foreground/60">
+              <p className="text-sm text-foreground/70">
                 {e.phone}
                 {e.design_reference ? ` · interested in ${e.design_reference}` : ""}
               </p>
-              {e.notes && <p className="text-sm text-foreground/60 mt-1">{e.notes}</p>}
-              <p className="text-xs text-foreground/40 mt-1">
+              {e.notes && <p className="text-sm text-foreground/70 mt-1">{e.notes}</p>}
+              <p className="text-xs text-foreground/70 mt-1">
                 Joined {new Date(e.created_at).toLocaleDateString()}
               </p>
             </div>
@@ -53,7 +53,7 @@ export default async function AdminWaitlistPage() {
             </div>
           </div>
         ))}
-        {entries.length === 0 && <p className="text-foreground/60">No one on the waitlist.</p>}
+        {entries.length === 0 && <p className="text-foreground/70">No one on the waitlist.</p>}
       </div>
     </div>
   );

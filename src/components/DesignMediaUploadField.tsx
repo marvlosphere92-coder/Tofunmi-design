@@ -73,7 +73,7 @@ export function DesignMediaUploadField({
       >
         Add photos or videos ({photos.length + videos.length} added)
       </CldUploadButton>
-      <p className="text-xs text-foreground/60">
+      <p className="text-xs text-foreground/70">
         The first photo is used as the cover shown in the lookbook grid.
       </p>
     </div>

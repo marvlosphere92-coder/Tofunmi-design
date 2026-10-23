@@ -80,7 +80,7 @@ export default async function AdminClientDetailPage({
                 <p className="font-medium">
                   {o.reference} — {design?.title ?? "—"}
                 </p>
-                <p className="text-sm text-foreground/60">
+                <p className="text-sm text-foreground/70">
                   {o.status.replace(/_/g, " ")}
                   {o.event_date ? ` · delivery ${new Date(o.event_date).toLocaleDateString()}` : ""} ·{" "}
                   placed {new Date(o.created_at).toLocaleDateString()}
@@ -88,7 +88,7 @@ export default async function AdminClientDetailPage({
               </Link>
             );
           })}
-          {orderList.length === 0 && <p className="text-foreground/60">No orders yet.</p>}
+          {orderList.length === 0 && <p className="text-foreground/70">No orders yet.</p>}
         </div>
       </section>
 
@@ -97,7 +97,7 @@ export default async function AdminClientDetailPage({
         <div className="space-y-2">
           {measurementList.map((m) => (
             <div key={m.id} className="rounded-lg border border-accent-soft p-4 text-sm">
-              <p className="text-foreground/60 mb-2">
+              <p className="text-foreground/70 mb-2">
                 {m.source === "designer" ? "Taken at fitting" : "Submitted by client"}
                 {m.verified ? " · verified" : ""} · {new Date(m.taken_at).toLocaleDateString()}
               </p>
@@ -122,7 +122,7 @@ export default async function AdminClientDetailPage({
             </div>
           ))}
           {measurementList.length === 0 && (
-            <p className="text-foreground/60">No measurements on file.</p>
+            <p className="text-foreground/70">No measurements on file.</p>
           )}
         </div>
       </section>

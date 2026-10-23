@@ -17,8 +17,8 @@ export function ProfileEditForm({
   if (!editing) {
     return (
       <div className="flex items-center justify-between gap-4 text-sm">
-        <p className="text-foreground/60">
-          {phone ? phone : <span className="text-foreground/40">No phone number on file</span>}
+        <p className="text-foreground/70">
+          {phone ? phone : <span className="text-foreground/70">No phone number on file</span>}
         </p>
         <button
           type="button"
@@ -39,7 +39,7 @@ export function ProfileEditForm({
       }}
       className="flex flex-wrap items-end gap-2"
     >
-      <label className="text-xs text-foreground/60">
+      <label className="text-xs text-foreground/70">
         Full name
         <input
           name="fullName"
@@ -48,7 +48,7 @@ export function ProfileEditForm({
           className="block rounded-md border border-accent-soft px-3 py-2 text-sm mt-1"
         />
       </label>
-      <label className="text-xs text-foreground/60">
+      <label className="text-xs text-foreground/70">
         Phone (WhatsApp)
         <input
           name="phone"

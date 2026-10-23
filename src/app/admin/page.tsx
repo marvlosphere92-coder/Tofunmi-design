@@ -72,14 +72,14 @@ export default async function AdminDashboard() {
 
       <div className="grid grid-cols-2 gap-4">
         <div className="rounded-lg bg-surface shadow-sm border-l-4 border-gold p-5">
-          <p className="text-sm text-foreground/60">New requests</p>
+          <p className="text-sm text-foreground/70">New requests</p>
           <p className="text-2xl font-medium text-gold">{pendingCount ?? 0}</p>
         </div>
         <Link
           href="/admin/waitlist"
           className="rounded-lg bg-surface shadow-sm border-l-4 border-accent p-5 transition hover:shadow-md hover:-translate-y-0.5"
         >
-          <p className="text-sm text-foreground/60">Waitlist (uncontacted)</p>
+          <p className="text-sm text-foreground/70">Waitlist (uncontacted)</p>
           <p className="text-2xl font-medium text-accent">{waitlistCount ?? 0}</p>
         </Link>
       </div>
@@ -88,11 +88,11 @@ export default async function AdminDashboard() {
         <h2 className="font-medium mb-3">Orders &amp; sales</h2>
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div className="rounded-lg bg-surface shadow-sm border-l-4 border-plum p-5">
-            <p className="text-sm text-foreground/60">Orders this month</p>
+            <p className="text-sm text-foreground/70">Orders this month</p>
             <p className="text-2xl font-medium">{ordersThisMonth}</p>
           </div>
           <div className="rounded-lg bg-surface shadow-sm border-l-4 border-emerald-500 p-5">
-            <p className="text-sm text-foreground/60">Revenue (completed orders)</p>
+            <p className="text-sm text-foreground/70">Revenue (completed orders)</p>
             <p className="text-2xl font-medium text-emerald-600">₦{revenue.toLocaleString()}</p>
           </div>
         </div>
@@ -126,7 +126,7 @@ export default async function AdminDashboard() {
           <div>
             <p className="text-sm font-medium mb-2">Most requested designs</p>
             {topDesigns.length === 0 ? (
-              <p className="text-sm text-foreground/60">No orders yet.</p>
+              <p className="text-sm text-foreground/70">No orders yet.</p>
             ) : (
               <div className="space-y-1 text-sm">
                 {topDesigns.map(([title, count]) => (
@@ -162,7 +162,7 @@ export default async function AdminDashboard() {
             Save
           </SubmitButton>
         </form>
-        <p className="text-xs text-foreground/60 mt-2">
+        <p className="text-xs text-foreground/70 mt-2">
           When unchecked, the order form sends clients to the waitlist instead.
         </p>
       </section>

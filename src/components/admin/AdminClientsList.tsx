@@ -41,18 +41,18 @@ export function AdminClientsList({
           >
             <div>
               <p className="font-medium">{c.full_name}</p>
-              <p className="text-sm text-foreground/60">
+              <p className="text-sm text-foreground/70">
                 {c.phone}
                 {c.email ? ` · ${c.email}` : ""}
               </p>
             </div>
-            <p className="text-sm text-foreground/60">
+            <p className="text-sm text-foreground/70">
               {orderCounts[c.id] ?? 0} order{orderCounts[c.id] === 1 ? "" : "s"}
             </p>
           </Link>
         ))}
         {filtered.length === 0 && (
-          <p className="text-foreground/60">
+          <p className="text-foreground/70">
             {clients.length === 0 ? "No clients yet." : "No clients match your search."}
           </p>
         )}

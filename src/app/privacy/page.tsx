@@ -12,7 +12,7 @@ export default function PrivacyPage() {
       <SiteNav />
       <main className="flex-1 mx-auto max-w-2xl px-6 py-16 w-full">
         <h1 className="font-serif text-2xl mb-2">Privacy Policy</h1>
-        <p className="text-sm text-foreground/60 mb-10">Last updated {new Date().toLocaleDateString()}</p>
+        <p className="text-sm text-foreground/70 mb-10">Last updated {new Date().toLocaleDateString()}</p>
 
         <div className="space-y-8 text-foreground/80 leading-relaxed">
           <section>

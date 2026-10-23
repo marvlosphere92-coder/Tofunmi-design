@@ -1,12 +1,37 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { whatsappOrderLink } from "@/lib/whatsapp";
 import { FadeIn } from "@/components/FadeIn";
 import { ReviewsGrid } from "@/components/ReviewsGrid";
 import { SaveDesignButton } from "@/components/SaveDesignButton";
+import { DesignCard } from "@/components/DesignCard";
 import type { Design, Review } from "@/types/db";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const supabase = await createClient();
+  const { data } = await supabase.from("designs").select("*").eq("id", id).single();
+  if (!data) return {};
+  const design = data as Design;
+  const description =
+    design.description ?? `Bespoke ${design.category} piece from SimplyBukky, made to your measurements.`;
+  return {
+    title: `${design.title} | SimplyBukky`,
+    description,
+    openGraph: {
+      title: `${design.title} | SimplyBukky`,
+      description,
+      images: design.cover_photo_url ? [design.cover_photo_url] : undefined,
+    },
+  };
+}
 
 export default async function DesignDetailPage({
   params,
@@ -32,6 +57,16 @@ export default async function DesignDetailPage({
   const videos = design.videos ?? [];
   const reviews = (reviewsData ?? []) as Review[];
 
+  const { data: relatedData } = await supabase
+    .from("designs")
+    .select("*")
+    .eq("active", true)
+    .eq("category", design.category)
+    .neq("id", design.id)
+    .order("display_order", { ascending: true })
+    .limit(4);
+  const related = (relatedData ?? []) as Design[];
+
   const signedIn = Boolean(userData.user) && userData.user?.app_metadata?.role !== "admin";
   let initialSaved = false;
   if (signedIn) {
@@ -48,7 +83,15 @@ export default async function DesignDetailPage({
   return (
     <>
       <SiteNav />
-      <main className="flex-1 mx-auto max-w-5xl px-6 py-12 w-full grid md:grid-cols-2 gap-10">
+      <main className="flex-1 mx-auto max-w-5xl px-6 pt-6 pb-12 w-full">
+        <Link
+          href="/designs"
+          className="inline-flex items-center gap-1 text-sm text-foreground/70 hover:text-accent transition mb-6"
+        >
+          ← Back to lookbook
+        </Link>
+
+        <div className="grid md:grid-cols-2 gap-10">
         <div className="space-y-3">
           {photos.map((url, i) => (
             <FadeIn key={i} delay={i * 0.1}>
@@ -56,6 +99,7 @@ export default async function DesignDetailPage({
               <img
                 src={url as string}
                 alt={`${design.title} photo ${i + 1}`}
+                loading={i === 0 ? "eager" : "lazy"}
                 className="w-full rounded-lg object-cover"
               />
             </FadeIn>
@@ -89,7 +133,7 @@ export default async function DesignDetailPage({
               {design.estimated_yards ? `~${design.estimated_yards} yards` : ""}
             </p>
           ) : (
-            <p className="mt-6 text-lg text-foreground/60">
+            <p className="mt-6 text-lg text-foreground/70">
               Price on request — message us on WhatsApp for a quote.
             </p>
           )}
@@ -114,12 +158,24 @@ export default async function DesignDetailPage({
             </div>
           </div>
         </FadeIn>
+        </div>
       </main>
 
       {reviews.length > 0 && (
         <section className="mx-auto max-w-5xl px-6 pb-16">
           <h2 className="font-serif text-xl mb-4">Reviews for this design</h2>
           <ReviewsGrid reviews={reviews} />
+        </section>
+      )}
+
+      {related.length > 0 && (
+        <section className="mx-auto max-w-5xl px-6 pb-16">
+          <h2 className="font-serif text-xl mb-4">You may also like</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {related.map((d, i) => (
+              <DesignCard key={d.id} design={d} index={i} />
+            ))}
+          </div>
         </section>
       )}
 

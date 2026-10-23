@@ -3,7 +3,7 @@ import type { Review } from "@/types/db";
 
 export function ReviewsGrid({ reviews }: { reviews: Review[] }) {
   if (reviews.length === 0) {
-    return <p className="text-foreground/60">No reviews yet.</p>;
+    return <p className="text-foreground/70">No reviews yet.</p>;
   }
 
   return (
@@ -23,7 +23,7 @@ export function ReviewsGrid({ reviews }: { reviews: Review[] }) {
               className="mt-3 w-24 h-24 rounded-md object-cover"
             />
           )}
-          <p className="mt-3 text-xs text-foreground/50">
+          <p className="mt-3 text-xs text-foreground/70">
             {r.reviewer_name} · {new Date(r.created_at).toLocaleDateString()}
           </p>
         </div>

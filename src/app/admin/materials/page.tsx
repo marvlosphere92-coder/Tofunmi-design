@@ -49,7 +49,7 @@ export default async function AdminMaterialsPage() {
               className="rounded-lg border border-accent-soft p-4 flex flex-wrap items-end gap-3"
             >
               <input type="hidden" name="materialId" value={m.id} />
-              <label className="text-xs text-foreground/60">
+              <label className="text-xs text-foreground/70">
                 Name
                 <input
                   name="name"
@@ -57,7 +57,7 @@ export default async function AdminMaterialsPage() {
                   className="block rounded-md border border-accent-soft px-2 py-1 text-sm mt-1"
                 />
               </label>
-              <label className="text-xs text-foreground/60">
+              <label className="text-xs text-foreground/70">
                 Type
                 <input
                   name="type"
@@ -65,7 +65,7 @@ export default async function AdminMaterialsPage() {
                   className="block rounded-md border border-accent-soft px-2 py-1 text-sm mt-1 w-28"
                 />
               </label>
-              <label className="text-xs text-foreground/60">
+              <label className="text-xs text-foreground/70">
                 ₦/yard
                 <input
                   name="pricePerYard"
@@ -74,7 +74,7 @@ export default async function AdminMaterialsPage() {
                   className="block rounded-md border border-accent-soft px-2 py-1 text-sm mt-1 w-24"
                 />
               </label>
-              <label className="flex items-center gap-1 text-xs text-foreground/60">
+              <label className="flex items-center gap-1 text-xs text-foreground/70">
                 <input type="checkbox" name="inStock" defaultChecked={m.in_stock} />
                 In stock
               </label>
@@ -87,7 +87,7 @@ export default async function AdminMaterialsPage() {
             </form>
           ))}
           {(!materials || materials.length === 0) && (
-            <p className="text-foreground/60">No materials yet.</p>
+            <p className="text-foreground/70">No materials yet.</p>
           )}
         </div>
       </section>

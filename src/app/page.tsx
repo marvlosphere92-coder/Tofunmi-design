@@ -4,10 +4,11 @@ import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { HeroReveal } from "@/components/HeroReveal";
 import { DesignCard } from "@/components/DesignCard";
 import { FadeIn } from "@/components/FadeIn";
-import { CategoryTiles } from "@/components/CategoryTiles";
+import { CategoryTiles, type CategoryTile } from "@/components/CategoryTiles";
 import { StatsStrip } from "@/components/StatsStrip";
 import { EditorialBreak } from "@/components/EditorialBreak";
 import { ReviewsGrid } from "@/components/ReviewsGrid";
+import { sortCategories } from "@/lib/categories";
 import type { CapacitySettings, Design, Review } from "@/types/db";
 
 export default async function Home() {
@@ -32,6 +33,19 @@ export default async function Home() {
   const featured = (designs ?? []) as Design[];
   const cap = capacity as CapacitySettings | null;
   const recentReviews = (reviews ?? []) as Review[];
+
+  // Build one homepage tile per category that has at least one active,
+  // real-photo design — avoids linking to an empty category and never
+  // falls back to a stock photo.
+  const categoriesWithPhotos = new Map<string, string>();
+  for (const d of featured) {
+    if (d.cover_photo_url && !categoriesWithPhotos.has(d.category)) {
+      categoriesWithPhotos.set(d.category, d.cover_photo_url);
+    }
+  }
+  const categoryTiles: CategoryTile[] = sortCategories(
+    Array.from(categoriesWithPhotos.keys())
+  ).map((category) => ({ category, image: categoriesWithPhotos.get(category)! }));
 
   return (
     <>
@@ -69,7 +83,7 @@ export default async function Home() {
         </div>
 
         <StatsStrip />
-        <CategoryTiles />
+        <CategoryTiles tiles={categoryTiles} />
         <EditorialBreak />
 
         {featured.length > 0 && (

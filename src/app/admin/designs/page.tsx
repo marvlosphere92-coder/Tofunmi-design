@@ -76,7 +76,7 @@ export default async function AdminDesignsPage() {
               Save as draft
             </SubmitButton>
           </div>
-          <p className="text-xs text-foreground/60">
+          <p className="text-xs text-foreground/70">
             A draft is saved hidden from the lookbook until you&apos;re ready to publish it.
           </p>
         </form>
@@ -132,7 +132,7 @@ export default async function AdminDesignsPage() {
                     {d.reference} — {d.title}
                     {!d.active && <span className="ml-2 text-xs text-accent">draft</span>}
                   </p>
-                  <p className="text-sm text-foreground/60">
+                  <p className="text-sm text-foreground/70">
                     {d.category}
                     {d.labour_price != null ? ` · ₦${d.labour_price.toLocaleString()}` : " · price not set"} ·{" "}
                     {d.active ? "active" : "hidden"}

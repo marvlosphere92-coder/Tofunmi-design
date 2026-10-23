@@ -3,7 +3,7 @@ import { FadeIn } from "@/components/FadeIn";
 const stats = [
   { value: "100%", label: "Hand-sewn, start to finish" },
   { value: "2–3 wks", label: "Typical turnaround" },
-  { value: "Limited", label: "Orders taken per month" },
+  { value: "Small batch", label: "Orders accepted monthly — book early" },
 ];
 
 export function StatsStrip() {

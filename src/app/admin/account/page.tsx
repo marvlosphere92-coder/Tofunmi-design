@@ -24,7 +24,7 @@ export default async function AdminAccountPage({
 
       <section>
         <h2 className="font-medium mb-3">Email</h2>
-        <p className="text-sm text-foreground/60 mb-3">
+        <p className="text-sm text-foreground/70 mb-3">
           Currently signed in as {data.user?.email}
         </p>
         <form action={changeEmail} className="flex gap-2">

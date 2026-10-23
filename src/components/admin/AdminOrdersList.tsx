@@ -71,7 +71,7 @@ export function AdminOrdersList({
                   <p className="font-medium">
                     {o.reference} — {client?.full_name ?? "Unknown"}
                   </p>
-                  <p className="text-sm text-foreground/60">
+                  <p className="text-sm text-foreground/70">
                     {design?.title ?? "—"} · {client?.phone}
                   </p>
                 </div>
@@ -110,7 +110,7 @@ export function AdminOrdersList({
                 className="flex flex-wrap items-end gap-2 border-t border-accent-soft pt-3"
               >
                 <input type="hidden" name="orderId" value={o.id} />
-                <label className="text-xs text-foreground/60">
+                <label className="text-xs text-foreground/70">
                   Delivery date
                   <input
                     type="date"
@@ -119,7 +119,7 @@ export function AdminOrdersList({
                     className="block rounded-md border border-accent-soft px-2 py-1 text-sm mt-1"
                   />
                 </label>
-                <label className="text-xs text-foreground/60">
+                <label className="text-xs text-foreground/70">
                   Estimated price (₦)
                   <input
                     type="number"
@@ -128,7 +128,7 @@ export function AdminOrdersList({
                     className="block w-32 rounded-md border border-accent-soft px-2 py-1 text-sm mt-1"
                   />
                 </label>
-                <label className="text-xs text-foreground/60">
+                <label className="text-xs text-foreground/70">
                   Final price (₦)
                   <input
                     type="number"
@@ -137,7 +137,7 @@ export function AdminOrdersList({
                     className="block w-32 rounded-md border border-accent-soft px-2 py-1 text-sm mt-1"
                   />
                 </label>
-                <label className="text-xs text-foreground/60 flex-1 min-w-[180px]">
+                <label className="text-xs text-foreground/70 flex-1 min-w-[180px]">
                   Notes
                   <input
                     type="text"
@@ -157,7 +157,7 @@ export function AdminOrdersList({
           );
         })}
         {filtered.length === 0 && (
-          <p className="text-foreground/60">
+          <p className="text-foreground/70">
             {orders.length === 0 ? "No orders yet." : "No orders match your search."}
           </p>
         )}

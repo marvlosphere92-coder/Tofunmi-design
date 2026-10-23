@@ -1,16 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import type { Design } from "@/types/db";
 
 export function DesignCard({ design, index = 0 }: { design: Design; index?: number }) {
+  const shouldReduceMotion = useReducedMotion();
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 28 }}
+      initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.55, delay: (index % 8) * 0.07, ease: [0.22, 1, 0.36, 1] }}
+      viewport={{ once: true, margin: "200px" }}
+      transition={{ duration: 0.3, delay: (index % 8) * 0.05, ease: [0.22, 1, 0.36, 1] }}
     >
       <Link href={`/designs/${design.id}`} className="group block">
         <motion.div
@@ -33,7 +35,7 @@ export function DesignCard({ design, index = 0 }: { design: Design; index?: numb
           </span>
         </motion.div>
         <p className="mt-2 text-sm transition group-hover:text-accent">{design.title}</p>
-        <p className="text-xs text-foreground/60">
+        <p className="text-xs text-foreground/70">
           {design.labour_price != null
             ? `From ₦${design.labour_price.toLocaleString()}`
             : "Price on request"}

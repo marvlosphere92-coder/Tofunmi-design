@@ -19,7 +19,7 @@ export default async function AdminReviewsPage() {
     <div className="space-y-10">
       <section>
         <h1 className="font-serif text-2xl mb-4">Add a review</h1>
-        <p className="text-sm text-foreground/60 mb-4">
+        <p className="text-sm text-foreground/70 mb-4">
           For clients who ordered through WhatsApp or in person — not through the site.
         </p>
         <form action={createAdminReview} className="space-y-3 max-w-md">
@@ -62,13 +62,13 @@ export default async function AdminReviewsPage() {
         <div className="space-y-2">
           {list.map((r) => (
             <div key={r.id} className="rounded-lg border border-accent-soft p-4 space-y-3">
-              <p className="text-xs text-foreground/50">
+              <p className="text-xs text-foreground/70">
                 {r.source === "admin" ? "Added by admin" : "From a buyer"} ·{" "}
                 {r.published ? "Published" : "Hidden"} · {new Date(r.created_at).toLocaleDateString()}
               </p>
               <form action={updateReview} className="flex flex-wrap items-end gap-2">
                 <input type="hidden" name="reviewId" value={r.id} />
-                <label className="text-xs text-foreground/60">
+                <label className="text-xs text-foreground/70">
                   Name
                   <input
                     name="reviewerName"
@@ -76,7 +76,7 @@ export default async function AdminReviewsPage() {
                     className="block rounded-md border border-accent-soft px-2 py-1 text-sm mt-1"
                   />
                 </label>
-                <label className="text-xs text-foreground/60">
+                <label className="text-xs text-foreground/70">
                   Rating
                   <select
                     key={r.rating}
@@ -91,7 +91,7 @@ export default async function AdminReviewsPage() {
                     ))}
                   </select>
                 </label>
-                <label className="text-xs text-foreground/60 flex-1 min-w-[200px]">
+                <label className="text-xs text-foreground/70 flex-1 min-w-[200px]">
                   What they said
                   <input
                     name="body"
@@ -122,7 +122,7 @@ export default async function AdminReviewsPage() {
               </div>
             </div>
           ))}
-          {list.length === 0 && <p className="text-foreground/60">No reviews yet.</p>}
+          {list.length === 0 && <p className="text-foreground/70">No reviews yet.</p>}
         </div>
       </section>
     </div>

@@ -103,7 +103,7 @@ export function GoogleSignInButton({ mode = "signin" }: { mode?: "signin" | "sig
       />
       <div ref={containerRef} />
       {status === "signing-in" && (
-        <p className="text-sm text-foreground/60">
+        <p className="text-sm text-foreground/70">
           {mode === "signup" ? "Creating your account…" : "Signing in…"}
         </p>
       )}

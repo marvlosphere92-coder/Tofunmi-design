@@ -21,24 +21,37 @@ export default async function WaitlistPage({
 
         <form action={joinWaitlist} className="mt-6 space-y-3">
           {design && <input type="hidden" name="designReference" value={design} />}
-          <input
-            name="fullName"
-            required
-            placeholder="Full name"
-            className="w-full rounded-md border border-accent-soft px-3 py-2"
-          />
-          <input
-            name="phone"
-            required
-            placeholder="Phone (WhatsApp number)"
-            className="w-full rounded-md border border-accent-soft px-3 py-2"
-          />
-          <textarea
-            name="notes"
-            placeholder="What style are you interested in?"
-            className="w-full rounded-md border border-accent-soft px-3 py-2"
-            rows={3}
-          />
+          <label className="block text-sm font-medium" htmlFor="fullName">
+            Full name
+            <input
+              id="fullName"
+              name="fullName"
+              required
+              autoComplete="name"
+              className="block w-full rounded-md border border-accent-soft px-3 py-2 text-base mt-1 font-normal"
+            />
+          </label>
+          <label className="block text-sm font-medium" htmlFor="phone">
+            Phone (WhatsApp number)
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              required
+              autoComplete="tel"
+              inputMode="tel"
+              className="block w-full rounded-md border border-accent-soft px-3 py-2 text-base mt-1 font-normal"
+            />
+          </label>
+          <label className="block text-sm font-medium" htmlFor="notes">
+            What style are you interested in?
+            <textarea
+              id="notes"
+              name="notes"
+              className="block w-full rounded-md border border-accent-soft px-3 py-2 text-base mt-1 font-normal"
+              rows={3}
+            />
+          </label>
           <SubmitButton
             className="w-full rounded-full bg-accent text-white py-3 shadow-sm hover:shadow-lg"
             pendingText="Joining…"

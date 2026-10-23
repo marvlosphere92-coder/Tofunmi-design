@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { whatsappGeneralLink } from "@/lib/whatsapp";
+import { whatsappGeneralLink, formatPhoneDisplay } from "@/lib/whatsapp";
 import { Avatar } from "@/components/Avatar";
 
 const navLinkClass =
@@ -44,8 +44,12 @@ function MailIcon() {
 
 export async function SiteNav() {
   const supabase = await createClient();
-  const { data } = await supabase.auth.getUser();
+  const [{ data }, { count: reviewCount }] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase.from("reviews").select("id", { count: "exact", head: true }).eq("published", true),
+  ]);
   const isCustomer = data.user && data.user.app_metadata?.role !== "admin";
+  const hasReviews = Boolean(reviewCount);
   const displayName =
     (data.user?.user_metadata?.full_name as string | undefined) ||
     (data.user?.user_metadata?.name as string | undefined) ||
@@ -57,10 +61,16 @@ export async function SiteNav() {
         <Link href="/" className="font-serif text-lg sm:text-2xl tracking-wide leading-tight">
           SimplyBukky
         </Link>
-        <div className="flex items-center gap-4 sm:gap-6 text-sm">
-          <Link href="/designs" className={navLinkClass}>Lookbook</Link>
-          <Link href="/reviews" className={navLinkClass}>Reviews</Link>
-          <Link href="/account" className={`${navLinkClass} flex items-center gap-2`}>
+        <div className="flex items-center gap-2 sm:gap-4 text-sm">
+          <Link href="/designs" className={`${navLinkClass} flex items-center min-h-11 px-2`}>
+            Lookbook
+          </Link>
+          {hasReviews && (
+            <Link href="/reviews" className={`${navLinkClass} flex items-center min-h-11 px-2`}>
+              Reviews
+            </Link>
+          )}
+          <Link href="/account" className={`${navLinkClass} flex items-center gap-2 min-h-11 px-2`}>
             {isCustomer && displayName && <Avatar name={displayName} className="w-6 h-6 text-xs" />}
             {isCustomer ? "My orders" : "Sign in"}
           </Link>
@@ -70,7 +80,13 @@ export async function SiteNav() {
   );
 }
 
-export function SiteFooter() {
+export async function SiteFooter() {
+  const supabase = await createClient();
+  const { count: reviewCount } = await supabase
+    .from("reviews")
+    .select("id", { count: "exact", head: true })
+    .eq("published", true);
+  const hasReviews = Boolean(reviewCount);
   const email = process.env.NEXT_PUBLIC_CONTACT_EMAIL;
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
   const phone = whatsappNumber ? `+${whatsappNumber}` : null;
@@ -80,23 +96,25 @@ export function SiteFooter() {
       <div className="mx-auto max-w-6xl px-6 py-12 grid gap-10 sm:grid-cols-3 text-sm">
         <div>
           <p className="font-serif text-xl tracking-wide">SimplyBukky</p>
-          <p className="mt-2 text-foreground/60">
+          <p className="mt-2 text-foreground/70">
             Bespoke fashion, made by hand — one piece at a time.
           </p>
         </div>
         <div>
           <p className="font-medium text-foreground/80 mb-3">Explore</p>
-          <ul className="space-y-2 text-foreground/60">
+          <ul className="space-y-2 text-foreground/70">
             <li>
               <Link href="/designs" className="transition hover:opacity-70">
                 Lookbook
               </Link>
             </li>
-            <li>
-              <Link href="/reviews" className="transition hover:opacity-70">
-                Reviews
-              </Link>
-            </li>
+            {hasReviews && (
+              <li>
+                <Link href="/reviews" className="transition hover:opacity-70">
+                  Reviews
+                </Link>
+              </li>
+            )}
             <li>
               <Link href="/privacy" className="transition hover:opacity-70">
                 Privacy Policy
@@ -116,10 +134,10 @@ export function SiteFooter() {
                   <PhoneIcon />
                 </span>
                 <span>
-                  <span className="block text-xs uppercase tracking-wide text-foreground/50">
+                  <span className="block text-xs uppercase tracking-wide text-foreground/70">
                     Call us
                   </span>
-                  <span className="text-foreground/80">{phone}</span>
+                  <span className="text-foreground/80">{formatPhoneDisplay(phone)}</span>
                 </span>
               </a>
             )}
@@ -134,10 +152,10 @@ export function SiteFooter() {
                   <ChatIcon />
                 </span>
                 <span>
-                  <span className="block text-xs uppercase tracking-wide text-foreground/50">
+                  <span className="block text-xs uppercase tracking-wide text-foreground/70">
                     WhatsApp
                   </span>
-                  <span className="text-foreground/80">{phone}</span>
+                  <span className="text-foreground/80">{formatPhoneDisplay(phone)}</span>
                 </span>
               </a>
             )}
@@ -150,17 +168,17 @@ export function SiteFooter() {
                   <MailIcon />
                 </span>
                 <span>
-                  <span className="block text-xs uppercase tracking-wide text-foreground/50">
+                  <span className="block text-xs uppercase tracking-wide text-foreground/70">
                     Email
                   </span>
-                  <span className="text-foreground/80 break-all">{email}</span>
+                  <span className="text-foreground/80 break-words">{email}</span>
                 </span>
               </a>
             )}
           </div>
         </div>
       </div>
-      <div className="border-t border-accent-soft py-4 text-center text-xs text-foreground/50">
+      <div className="border-t border-accent-soft py-4 text-center text-xs text-foreground/70">
         &copy; {new Date().getFullYear()} SimplyBukky. All rights reserved.
       </div>
     </footer>
