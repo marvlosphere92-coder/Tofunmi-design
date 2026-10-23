@@ -55,8 +55,7 @@ export async function SiteNav() {
         <div className="flex gap-4 sm:gap-6 text-sm">
           <Link href="/designs" className={navLinkClass}>Lookbook</Link>
           <Link href="/reviews" className={navLinkClass}>Reviews</Link>
-          <Link href="/about" className={navLinkClass}>About</Link>
-          <Link href="/about#faq" className={navLinkClass}>FAQ</Link>
+          <Link href="/faq" className={navLinkClass}>FAQ</Link>
           <Link href="/account" className={navLinkClass}>
             {isCustomer ? "My orders" : "Sign in"}
           </Link>
@@ -94,8 +93,8 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
-              <Link href="/about" className="transition hover:opacity-70">
-                About
+              <Link href="/faq" className="transition hover:opacity-70">
+                FAQ
               </Link>
             </li>
             <li>
