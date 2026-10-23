@@ -3,11 +3,24 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { linkClientAccount } from "@/lib/linkClientAccount";
 
 export async function signOutCustomer() {
   const supabase = await createClient();
   await supabase.auth.signOut();
   redirect("/");
+}
+
+// Called client-side right after a sign-in method that doesn't go through
+// /auth/callback (e.g. Google Identity Services' direct ID-token flow,
+// which never redirects). Does the same guest-order linking that route
+// does for the redirect-based flows.
+export async function linkSignedInAccount() {
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getUser();
+  if (data.user) {
+    await linkClientAccount(data.user);
+  }
 }
 
 export async function submitBuyerReview(formData: FormData) {

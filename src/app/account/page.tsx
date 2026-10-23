@@ -27,7 +27,9 @@ export default async function AccountPage() {
           <p className="mt-1 text-sm text-foreground/50">
             New here? There&apos;s no separate sign-up — signing in creates your account.
           </p>
-          <GoogleSignInButton className="mt-8 inline-block rounded-full bg-accent text-white px-8 py-3" />
+          <div className="mt-8 flex justify-center">
+            <GoogleSignInButton />
+          </div>
           <div className="mt-8 max-w-xs mx-auto">
             <p className="text-xs uppercase tracking-wide text-foreground/50 mb-3">
               Or, without Google
