@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { CldUploadButton } from "next-cloudinary";
 import { createClient } from "@/lib/supabase/client";
 import type { ChatMessage } from "@/types/db";
+
+const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
 
 type PendingMessage = ChatMessage & { pending?: boolean; failed?: boolean };
 
@@ -27,7 +28,9 @@ export function ChatThread({
   const [messages, setMessages] = useState<PendingMessage[]>(initialMessages);
   const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
-  const [uploadError, setUploadError] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [connectionState, setConnectionState] = useState<"connecting" | "live" | "reconnecting">(
     "connecting"
   );
@@ -142,6 +145,41 @@ export function ChatThread({
     await doSend(body);
   };
 
+  const handleFilePicked = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = ""; // allow picking the same file again later
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setUploadError("Please choose an image file.");
+      return;
+    }
+    if (file.size > MAX_IMAGE_BYTES) {
+      setUploadError("That image is too large (max 8MB).");
+      return;
+    }
+
+    setUploadError(null);
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!);
+
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+        { method: "POST", body: formData }
+      );
+      if (!res.ok) throw new Error("Upload failed");
+      const data = await res.json();
+      await doSend(draft.trim(), data.secure_url as string);
+    } catch {
+      setUploadError("Couldn't upload that image — try again.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   return (
     <div className="flex flex-col h-[70vh] min-h-[420px] rounded-lg border border-accent-soft overflow-hidden">
       <div className="px-4 py-3 border-b border-accent-soft bg-accent-soft/20 flex items-center justify-between">
@@ -194,20 +232,29 @@ export function ChatThread({
       </div>
 
       <form onSubmit={handleSend} className="border-t border-accent-soft p-3 flex items-center gap-2">
-        <CldUploadButton
-          uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
-          options={{ multiple: false, maxFiles: 1, resourceType: "image" }}
-          className="flex-shrink-0 w-9 h-9 rounded-full border border-accent-soft flex items-center justify-center text-foreground/70 hover:bg-accent-soft transition disabled:opacity-50"
-          onSuccess={(result) => {
-            setUploadError(false);
-            if (typeof result.info !== "object" || !result.info || !("secure_url" in result.info)) return;
-            doSend(draft.trim(), result.info.secure_url as string);
-          }}
-          onError={() => setUploadError(true)}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleFilePicked}
+          className="hidden"
+          aria-hidden="true"
+          tabIndex={-1}
+        />
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={uploading}
+          aria-label="Attach an image"
+          title="Attach an image"
+          className="flex-shrink-0 w-9 h-9 rounded-full border border-accent-soft flex items-center justify-center text-accent hover:bg-accent-soft transition disabled:opacity-50"
         >
-          <span aria-hidden="true">📷</span>
-          <span className="sr-only">Attach an image</span>
-        </CldUploadButton>
+          {uploading ? (
+            <span className="w-4 h-4 rounded-full border-2 border-accent border-t-transparent animate-spin" />
+          ) : (
+            <ImageIcon />
+          )}
+        </button>
         <input
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
@@ -224,9 +271,17 @@ export function ChatThread({
           Send
         </button>
       </form>
-      {uploadError && (
-        <p className="px-3 pb-2 text-xs text-red-700">Couldn&apos;t upload that image — try again.</p>
-      )}
+      {uploadError && <p className="px-3 pb-2 text-xs text-red-700">{uploadError}</p>}
     </div>
+  );
+}
+
+function ImageIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+      <rect x="3" y="4" width="18" height="16" rx="2" />
+      <circle cx="8.5" cy="9.5" r="1.5" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="m4 17 5-5 3.5 3.5L17 11l3 3" />
+    </svg>
   );
 }
