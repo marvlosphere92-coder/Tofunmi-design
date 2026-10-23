@@ -87,17 +87,22 @@ export default async function AccountPage() {
           </form>
         </div>
 
-        {orderList.length > 0 && (
-          <div className="mt-6 flex gap-6 text-sm text-foreground/70">
-            <p>
-              <span className="font-medium text-foreground">{orderList.length}</span> order
-              {orderList.length === 1 ? "" : "s"}
-            </p>
-            <p>
-              <span className="font-medium text-foreground">{completedCount}</span> completed
-            </p>
-          </div>
-        )}
+        <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-foreground/70">
+          {orderList.length > 0 && (
+            <>
+              <p>
+                <span className="font-medium text-foreground">{orderList.length}</span> order
+                {orderList.length === 1 ? "" : "s"}
+              </p>
+              <p>
+                <span className="font-medium text-foreground">{completedCount}</span> completed
+              </p>
+            </>
+          )}
+          <Link href="/account/chat" className="underline hover:text-accent transition">
+            Message us
+          </Link>
+        </div>
 
         {c && (
           <section className="mt-10 rounded-lg border border-accent-soft p-5">

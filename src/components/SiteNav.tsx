@@ -32,6 +32,18 @@ function ChatIcon() {
   );
 }
 
+function MessageIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M4 4h16v12H7l-3 3V4Z"
+      />
+    </svg>
+  );
+}
+
 function MailIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
@@ -58,6 +70,7 @@ export async function SiteNav() {
     data.user?.email;
 
   let savedCount = 0;
+  let chatUnreadCount = 0;
   if (isCustomer && data.user) {
     const { data: client } = await supabase
       .from("clients")
@@ -65,11 +78,20 @@ export async function SiteNav() {
       .eq("user_id", data.user.id)
       .maybeSingle();
     if (client) {
-      const { count } = await supabase
-        .from("saved_designs")
-        .select("id", { count: "exact", head: true })
-        .eq("client_id", client.id);
-      savedCount = count ?? 0;
+      const [{ count: saved }, { count: unread }] = await Promise.all([
+        supabase
+          .from("saved_designs")
+          .select("id", { count: "exact", head: true })
+          .eq("client_id", client.id),
+        supabase
+          .from("chat_messages")
+          .select("id", { count: "exact", head: true })
+          .eq("client_id", client.id)
+          .eq("sender_role", "admin")
+          .eq("read_by_client", false),
+      ]);
+      savedCount = saved ?? 0;
+      chatUnreadCount = unread ?? 0;
     }
   }
 
@@ -91,6 +113,16 @@ export async function SiteNav() {
           {isCustomer && savedCount > 0 && (
             <Link href="/account#saved" className={`${navLinkClass} flex items-center min-h-11 px-2`}>
               Saved ({savedCount})
+            </Link>
+          )}
+          {isCustomer && (
+            <Link href="/account/chat" className={`${navLinkClass} flex items-center gap-1.5 min-h-11 px-2`}>
+              Messages
+              {chatUnreadCount > 0 && (
+                <span className="rounded-full bg-accent text-white text-[10px] px-1.5 py-0.5 leading-none">
+                  {chatUnreadCount}
+                </span>
+              )}
             </Link>
           )}
           <Link href="/account" className={`${navLinkClass} flex items-center gap-2 min-h-11 px-2`}>
@@ -115,11 +147,12 @@ export async function SiteNav() {
 
 export async function SiteFooter() {
   const supabase = await createClient();
-  const { count: reviewCount } = await supabase
-    .from("reviews")
-    .select("id", { count: "exact", head: true })
-    .eq("published", true);
+  const [{ count: reviewCount }, { data: userData }] = await Promise.all([
+    supabase.from("reviews").select("id", { count: "exact", head: true }).eq("published", true),
+    supabase.auth.getUser(),
+  ]);
   const hasReviews = Boolean(reviewCount);
+  const isCustomer = userData.user && userData.user.app_metadata?.role !== "admin";
   const email = process.env.NEXT_PUBLIC_CONTACT_EMAIL;
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
   const phone = whatsappNumber ? `+${whatsappNumber}` : null;
@@ -158,6 +191,22 @@ export async function SiteFooter() {
         <div>
           <p className="font-medium text-foreground/80 mb-3">Get in touch</p>
           <div className="space-y-2">
+            <a
+              href={isCustomer ? "/account/chat" : "/account"}
+              className="flex items-center gap-3 rounded-lg px-3 py-2 -mx-3 transition hover:bg-surface hover:shadow-sm"
+            >
+              <span className="flex items-center justify-center w-9 h-9 rounded-full bg-accent-soft text-accent flex-shrink-0">
+                <MessageIcon />
+              </span>
+              <span>
+                <span className="block text-xs uppercase tracking-wide text-foreground/70">
+                  Chat on the app
+                </span>
+                <span className="text-foreground/80">
+                  {isCustomer ? "Message us anytime" : "Sign in to message us"}
+                </span>
+              </span>
+            </a>
             {phone && (
               <a
                 href={`tel:${phone}`}

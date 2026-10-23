@@ -42,6 +42,24 @@ export async function sendWelcomeEmail(opts: { to: string; name: string }) {
   });
 }
 
+export async function sendChatMessageEmail(opts: {
+  to: string;
+  recipientName: string;
+  senderName: string;
+  body: string;
+  chatUrl: string;
+}) {
+  await sendEmail({
+    to: opts.to,
+    subject: `New message from ${opts.senderName}`,
+    text: [
+      `Hi ${opts.recipientName}, you have a new message on SimplyBukky:`,
+      `"${opts.body}"`,
+      `Reply here: ${opts.chatUrl}`,
+    ].join("\n\n"),
+  });
+}
+
 export async function sendOrderStatusEmail(opts: {
   to: string;
   clientName: string;

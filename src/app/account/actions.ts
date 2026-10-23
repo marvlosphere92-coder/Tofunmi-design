@@ -23,7 +23,7 @@ export async function linkSignedInAccount() {
   }
 }
 
-async function getSignedInClient(userId: string) {
+export async function getSignedInClient(userId: string) {
   const supabase = createServiceClient();
   const { data } = await supabase.from("clients").select("id").eq("user_id", userId).single();
   return data?.id as string | undefined;

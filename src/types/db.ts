@@ -101,6 +101,16 @@ export interface Measurement {
   taken_at: string;
 }
 
+export interface ChatMessage {
+  id: string;
+  client_id: string;
+  sender_role: "client" | "admin";
+  body: string;
+  read_by_client: boolean;
+  read_by_admin: boolean;
+  created_at: string;
+}
+
 export interface Order {
   id: string;
   reference: string;

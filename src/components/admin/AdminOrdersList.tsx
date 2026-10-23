@@ -23,18 +23,45 @@ export interface OrderRow {
   budget_note: string | null;
   estimated_price: number | null;
   final_price: number | null;
+  own_fabric: boolean;
   clients: { full_name: string; phone: string } | null;
   designs: { title: string } | null;
+  materials: { name: string; price_per_yard: number } | null;
+  measurements: {
+    id: string;
+    source: "client" | "designer";
+    verified: boolean;
+    bust: number | null;
+    waist: number | null;
+    hip: number | null;
+    shoulder: number | null;
+    sleeve_length: number | null;
+    back_length: number | null;
+    inseam: number | null;
+    notes: string | null;
+  } | null;
 }
+
+const MEASUREMENT_FIELDS: [keyof NonNullable<OrderRow["measurements"]>, string][] = [
+  ["bust", "Bust"],
+  ["waist", "Waist"],
+  ["hip", "Hip"],
+  ["shoulder", "Shoulder"],
+  ["sleeve_length", "Sleeve length"],
+  ["back_length", "Back length"],
+  ["inseam", "Inseam"],
+];
 
 export function AdminOrdersList({
   orders,
   updateOrderStatus,
   updateOrderDetails,
+  verifyMeasurement,
 }: {
   orders: OrderRow[];
   updateOrderStatus: (formData: FormData) => void;
   updateOrderDetails: (formData: FormData) => void;
+  verifyMeasurement: (formData: FormData) => void;
 }) {
   const [search, setSearch] = useState("");
 
@@ -104,6 +131,71 @@ export function AdminOrdersList({
                   until you add one below.
                 </p>
               )}
+
+              <div className="flex flex-wrap gap-3 text-sm border-t border-accent-soft pt-3">
+                <div className="rounded-md bg-accent-soft/30 px-3 py-2">
+                  <p className="text-xs text-foreground/70 mb-0.5">Fabric</p>
+                  {o.own_fabric ? (
+                    <p>Client is bringing their own fabric</p>
+                  ) : o.materials ? (
+                    <p>
+                      {o.materials.name} — ₦{o.materials.price_per_yard.toLocaleString()}/yard
+                    </p>
+                  ) : (
+                    <p className="text-foreground/70">No fabric choice on file</p>
+                  )}
+                </div>
+
+                <div className="rounded-md bg-accent-soft/30 px-3 py-2 flex-1 min-w-[220px]">
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <p className="text-xs text-foreground/70">Measurements</p>
+                    {o.measurements && (
+                      <span
+                        className={`text-xs rounded-full px-2 py-0.5 ${
+                          o.measurements.verified
+                            ? "bg-accent text-white"
+                            : "bg-gold-soft text-foreground/80"
+                        }`}
+                      >
+                        {o.measurements.verified ? "Verified" : "Needs verifying"}
+                      </span>
+                    )}
+                  </div>
+                  {o.measurements ? (
+                    <>
+                      <p className="text-xs text-foreground/70 mb-1">
+                        Submitted by {o.measurements.source === "client" ? "the client" : "the designer"}
+                      </p>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-3 gap-y-1">
+                        {MEASUREMENT_FIELDS.map(([key, label]) => {
+                          const value = o.measurements![key];
+                          return value != null ? (
+                            <p key={key}>
+                              <span className="text-foreground/70">{label}:</span> {value}&quot;
+                            </p>
+                          ) : null;
+                        })}
+                      </div>
+                      {o.measurements.notes && (
+                        <p className="mt-1 text-xs text-foreground/70">Notes: {o.measurements.notes}</p>
+                      )}
+                      {!o.measurements.verified && (
+                        <form action={verifyMeasurement} className="mt-2">
+                          <input type="hidden" name="measurementId" value={o.measurements.id} />
+                          <SubmitButton
+                            className="rounded-full border border-accent-soft px-3 py-1 text-xs"
+                            pendingText="Marking…"
+                          >
+                            Mark verified
+                          </SubmitButton>
+                        </form>
+                      )}
+                    </>
+                  ) : (
+                    <p className="text-foreground/70">We&apos;ll measure at a fitting — none submitted yet</p>
+                  )}
+                </div>
+              </div>
 
               <form
                 action={updateOrderDetails}

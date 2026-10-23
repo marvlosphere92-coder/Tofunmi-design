@@ -13,7 +13,14 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     return <>{children}</>; // login page itself, proxy already redirects other routes
   }
 
-  const { data: capacity } = await supabase.from("capacity_settings").select("*").single();
+  const [{ data: capacity }, { count: chatUnreadCount }] = await Promise.all([
+    supabase.from("capacity_settings").select("*").single(),
+    supabase
+      .from("chat_messages")
+      .select("id", { count: "exact", head: true })
+      .eq("sender_role", "client")
+      .eq("read_by_admin", false),
+  ]);
   const accepting = (capacity as CapacitySettings | null)?.accepting_orders ?? true;
 
   return (
@@ -30,7 +37,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </span>
         </div>
         <nav className="mx-auto max-w-5xl flex flex-wrap items-center gap-x-4 gap-y-2 px-4 sm:px-6 py-3 border-t border-white/10">
-          <AdminNavLinks />
+          <AdminNavLinks chatUnreadCount={chatUnreadCount ?? 0} />
           <form action={signOut}>
             <SubmitButton className="text-sm text-white/80 underline hover:text-white" pendingText="Signing out…">
               Sign out

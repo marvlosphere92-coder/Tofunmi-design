@@ -38,6 +38,13 @@ export async function updateOrderStatus(formData: FormData) {
   revalidatePath("/admin/orders");
 }
 
+export async function verifyMeasurement(formData: FormData) {
+  const supabase = createServiceClient();
+  const measurementId = String(formData.get("measurementId"));
+  await supabase.from("measurements").update({ verified: true }).eq("id", measurementId);
+  revalidatePath("/admin/orders");
+}
+
 export async function updateOrderDetails(formData: FormData) {
   const supabase = createServiceClient();
   const orderId = String(formData.get("orderId"));

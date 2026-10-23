@@ -9,12 +9,13 @@ const links = [
   { href: "/admin/designs", label: "Designs" },
   { href: "/admin/materials", label: "Materials" },
   { href: "/admin/clients", label: "Clients" },
+  { href: "/admin/chat", label: "Messages" },
   { href: "/admin/waitlist", label: "Waitlist" },
   { href: "/admin/reviews", label: "Reviews" },
   { href: "/admin/account", label: "Account" },
 ];
 
-export function AdminNavLinks() {
+export function AdminNavLinks({ chatUnreadCount = 0 }: { chatUnreadCount?: number }) {
   const pathname = usePathname();
 
   return (
@@ -25,11 +26,16 @@ export function AdminNavLinks() {
           <Link
             key={l.href}
             href={l.href}
-            className={`transition hover:text-gold-rich ${
+            className={`transition hover:text-gold-rich inline-flex items-center gap-1.5 ${
               active ? "font-medium text-gold-rich underline underline-offset-4" : "text-white/80"
             }`}
           >
             {l.label}
+            {l.href === "/admin/chat" && chatUnreadCount > 0 && (
+              <span className="rounded-full bg-gold text-plum text-[10px] font-medium px-1.5 py-0.5 leading-none">
+                {chatUnreadCount}
+              </span>
+            )}
           </Link>
         );
       })}
