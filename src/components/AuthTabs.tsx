@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { GoogleSignInButton } from "@/components/GoogleSignInButton";
 import { EmailSignInForm } from "@/components/EmailSignInForm";
+import { PasswordSignInForm } from "@/components/PasswordSignInForm";
 
 export function AuthTabs() {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [method, setMethod] = useState<"link" | "password">("link");
 
   return (
     <div>
@@ -39,9 +41,32 @@ export function AuthTabs() {
       <div className="mt-6 flex justify-center">
         <GoogleSignInButton mode={mode} />
       </div>
+
       <div className="mt-6 max-w-xs mx-auto">
         <p className="text-xs uppercase tracking-wide text-foreground/70 mb-3">Or, without Google</p>
-        <EmailSignInForm mode={mode} />
+
+        <div className="inline-flex rounded-full border border-accent-soft p-1 text-xs mb-4">
+          <button
+            type="button"
+            onClick={() => setMethod("link")}
+            className={`rounded-full px-3 py-1 transition ${
+              method === "link" ? "bg-accent-soft text-foreground" : "text-foreground/60 hover:text-foreground"
+            }`}
+          >
+            Email link
+          </button>
+          <button
+            type="button"
+            onClick={() => setMethod("password")}
+            className={`rounded-full px-3 py-1 transition ${
+              method === "password" ? "bg-accent-soft text-foreground" : "text-foreground/60 hover:text-foreground"
+            }`}
+          >
+            Password
+          </button>
+        </div>
+
+        {method === "link" ? <EmailSignInForm mode={mode} /> : <PasswordSignInForm mode={mode} />}
       </div>
     </div>
   );

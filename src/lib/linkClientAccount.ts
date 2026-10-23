@@ -1,4 +1,5 @@
 import { createServiceClient } from "@/lib/supabase/server";
+import { sendWelcomeEmail } from "@/lib/resend";
 
 // Links a signed-in customer to their `clients` row: reuses one already
 // linked, adopts a matching guest record by email (Google has already
@@ -41,6 +42,10 @@ export async function linkClientAccount(user: {
     .insert({ user_id: user.id, full_name: fullName, email: user.email })
     .select("id")
     .single();
+
+  if (created) {
+    await sendWelcomeEmail({ to: user.email, name: fullName });
+  }
 
   return created?.id ?? null;
 }

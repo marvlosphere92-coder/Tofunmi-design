@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createServiceClient } from "@/lib/supabase/server";
-import { sendOrderDetailsUpdatedEmail } from "@/lib/resend";
+import { sendOrderDetailsUpdatedEmail, sendAdminNotification } from "@/lib/resend";
 
 export async function updateOrderByClient(formData: FormData) {
   const supabase = createServiceClient();
@@ -34,6 +34,12 @@ export async function updateOrderByClient(formData: FormData) {
       budgetNote,
     });
   }
+  await sendAdminNotification({
+    subject: `Order ${order.reference} updated by customer`,
+    text: `${client?.full_name ?? "A customer"} just changed the delivery date and/or notes on order ${order.reference}.${
+      eventDate ? ` New delivery date: ${eventDate}.` : ""
+    }${budgetNote ? ` Notes: ${budgetNote}` : ""}`,
+  });
 
   revalidatePath(`/order/manage/${orderId}`);
 }

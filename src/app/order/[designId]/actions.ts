@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
-import { sendOrderStatusEmail } from "@/lib/resend";
+import { sendOrderStatusEmail, sendAdminNotification } from "@/lib/resend";
 import { linkClientAccount } from "@/lib/linkClientAccount";
 
 async function nextReference(
@@ -114,6 +114,12 @@ export async function submitOrder(formData: FormData) {
   await supabase
     .from("order_status_events")
     .insert({ order_id: order.id, status: "requested" });
+
+  const { data: design } = await supabase.from("designs").select("title").eq("id", designId).maybeSingle();
+  await sendAdminNotification({
+    subject: `New order request: ${reference}`,
+    text: `${fullName} (${phone}${email ? `, ${email}` : ""}) just requested "${design?.title ?? "a design"}" — order ${reference}.`,
+  });
 
   if (email) {
     const base =

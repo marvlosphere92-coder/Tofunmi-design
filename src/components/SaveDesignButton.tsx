@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { toggleSavedDesign } from "@/app/account/actions";
 
 export function SaveDesignButton({
@@ -14,6 +14,14 @@ export function SaveDesignButton({
 }) {
   const [saved, setSaved] = useState(initialSaved);
   const [pending, startTransition] = useTransition();
+  const [showToast, setShowToast] = useState(false);
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (toastTimer.current) clearTimeout(toastTimer.current);
+    };
+  }, []);
 
   if (!signedIn) {
     return (
@@ -29,7 +37,15 @@ export function SaveDesignButton({
   }
 
   return (
-    <div className="flex flex-col items-center gap-1.5">
+    <div className="relative flex flex-col items-center gap-1.5">
+      {showToast && (
+        <div
+          role="status"
+          className="absolute -top-11 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-foreground text-background text-xs px-3 py-1.5 shadow-lg"
+        >
+          Saved to your account ♥
+        </div>
+      )}
       <button
         type="button"
         disabled={pending}
@@ -42,6 +58,11 @@ export function SaveDesignButton({
             formData.set("saved", String(saved));
             try {
               await toggleSavedDesign(formData);
+              if (next) {
+                setShowToast(true);
+                if (toastTimer.current) clearTimeout(toastTimer.current);
+                toastTimer.current = setTimeout(() => setShowToast(false), 2500);
+              }
             } catch {
               setSaved(!next);
             }
