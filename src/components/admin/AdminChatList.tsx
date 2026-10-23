@@ -40,7 +40,12 @@ export function AdminChatList({
               <p className="text-sm text-foreground/70 truncate">
                 {lastMessage
                   ? `${lastMessage.sender_role === "admin" ? "You: " : ""}${
-                      lastMessage.body || (lastMessage.media_url ? "📷 Image" : "")
+                      lastMessage.body ||
+                      (lastMessage.media_url
+                        ? lastMessage.media_url.includes("/video/upload/")
+                          ? "🎥 Video"
+                          : "📷 Image"
+                        : "")
                     }`
                   : "No messages yet"}
               </p>

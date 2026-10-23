@@ -5,6 +5,11 @@ import { createClient } from "@/lib/supabase/client";
 import type { ChatMessage } from "@/types/db";
 
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
+const MAX_VIDEO_BYTES = 50 * 1024 * 1024;
+
+function isVideoUrl(url: string) {
+  return url.includes("/video/upload/");
+}
 
 type PendingMessage = ChatMessage & { pending?: boolean; failed?: boolean };
 
@@ -150,12 +155,15 @@ export function ChatThread({
     e.target.value = ""; // allow picking the same file again later
     if (!file) return;
 
-    if (!file.type.startsWith("image/")) {
-      setUploadError("Please choose an image file.");
+    const isVideo = file.type.startsWith("video/");
+    const isImage = file.type.startsWith("image/");
+    if (!isVideo && !isImage) {
+      setUploadError("Please choose an image or video file.");
       return;
     }
-    if (file.size > MAX_IMAGE_BYTES) {
-      setUploadError("That image is too large (max 8MB).");
+    const maxBytes = isVideo ? MAX_VIDEO_BYTES : MAX_IMAGE_BYTES;
+    if (file.size > maxBytes) {
+      setUploadError(`That file is too large (max ${isVideo ? "50MB" : "8MB"}).`);
       return;
     }
 
@@ -167,14 +175,16 @@ export function ChatThread({
       formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!);
 
       const res = await fetch(
-        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/${
+          isVideo ? "video" : "image"
+        }/upload`,
         { method: "POST", body: formData }
       );
       if (!res.ok) throw new Error("Upload failed");
       const data = await res.json();
       await doSend(draft.trim(), data.secure_url as string);
     } catch {
-      setUploadError("Couldn't upload that image — try again.");
+      setUploadError(`Couldn't upload that ${isVideo ? "video" : "image"} — try again.`);
     } finally {
       setUploading(false);
     }
@@ -206,16 +216,26 @@ export function ChatThread({
                   mine ? "bg-accent text-white" : "bg-accent-soft/50 text-foreground"
                 } ${m.pending ? "opacity-60" : ""}`}
               >
-                {m.media_url && (
-                  <a href={m.media_url} target="_blank" rel="noopener noreferrer" className="block mb-1">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={m.media_url}
-                      alt="Shared"
-                      loading="lazy"
-                      className="max-h-64 rounded-lg object-contain bg-black/5"
-                    />
-                  </a>
+                {m.media_url && isVideoUrl(m.media_url) ? (
+                  <video
+                    src={m.media_url}
+                    controls
+                    playsInline
+                    preload="metadata"
+                    className="max-h-64 w-full rounded-lg bg-black mb-1"
+                  />
+                ) : (
+                  m.media_url && (
+                    <a href={m.media_url} target="_blank" rel="noopener noreferrer" className="block mb-1">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={m.media_url}
+                        alt="Shared"
+                        loading="lazy"
+                        className="max-h-64 rounded-lg object-contain bg-black/5"
+                      />
+                    </a>
+                  )
                 )}
                 {m.body}
                 <div className={`mt-1 text-[10px] ${mine ? "text-white/70" : "text-foreground/60"}`}>
@@ -235,7 +255,7 @@ export function ChatThread({
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/*"
+          accept="image/*,video/*"
           onChange={handleFilePicked}
           className="hidden"
           aria-hidden="true"
@@ -245,8 +265,8 @@ export function ChatThread({
           type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={uploading}
-          aria-label="Attach an image"
-          title="Attach an image"
+          aria-label="Attach an image or video"
+          title="Attach an image or video"
           className="flex-shrink-0 w-9 h-9 rounded-full border border-accent-soft flex items-center justify-center text-accent hover:bg-accent-soft transition disabled:opacity-50"
         >
           {uploading ? (

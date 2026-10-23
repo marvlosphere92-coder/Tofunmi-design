@@ -9,6 +9,7 @@ export const CHAT_RATE_LIMIT_WINDOW_MS = 60_000;
 
 // Pinned to our own Cloudinary account's path, not just the host — a bare
 // res.cloudinary.com check would accept any tenant's uploaded files.
+// Covers both /image/upload/ and /video/upload/ paths.
 export function isAllowedChatMediaUrl(url: string): boolean {
   try {
     const parsed = new URL(url);

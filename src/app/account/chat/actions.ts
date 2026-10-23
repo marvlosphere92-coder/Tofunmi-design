@@ -20,7 +20,7 @@ export async function sendClientChatMessage(body: string, mediaUrl?: string | nu
     throw new Error("Message can't be empty.");
   }
   if (mediaUrl && !isAllowedChatMediaUrl(mediaUrl)) {
-    throw new Error("Invalid image.");
+    throw new Error("Invalid attachment.");
   }
 
   const supabase = createServiceClient();
@@ -57,7 +57,9 @@ export async function sendClientChatMessage(body: string, mediaUrl?: string | nu
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
   await sendAdminNotification({
     subject: `New chat message from ${client?.full_name ?? "a customer"}`,
-    text: `${client?.full_name ?? "A customer"} says: "${trimmed || "[Image]"}"\n\nReply here: ${base}/admin/chat/${clientId}`,
+    text: `${client?.full_name ?? "A customer"} says: "${
+      trimmed || (mediaUrl?.includes("/video/upload/") ? "[Video]" : "[Image]")
+    }"\n\nReply here: ${base}/admin/chat/${clientId}`,
   });
 
   revalidatePath("/account/chat");

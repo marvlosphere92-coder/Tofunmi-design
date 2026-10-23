@@ -27,7 +27,7 @@ export async function sendAdminChatMessage(
     throw new Error("Message can't be empty.");
   }
   if (mediaUrl && !isAllowedChatMediaUrl(mediaUrl)) {
-    throw new Error("Invalid image.");
+    throw new Error("Invalid attachment.");
   }
 
   const supabase = createServiceClient();
@@ -61,7 +61,7 @@ export async function sendAdminChatMessage(
       to: client.email,
       recipientName: client.full_name,
       senderName: "SimplyBukky",
-      body: trimmed || "[Image]",
+      body: trimmed || (mediaUrl?.includes("/video/upload/") ? "[Video]" : "[Image]"),
       chatUrl: `${base}/account/chat`,
     });
   }
