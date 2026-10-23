@@ -1,7 +1,7 @@
 import { FadeIn } from "@/components/FadeIn";
 
 const stats = [
-  { value: "100%", label: "Hand-sewn, start to finish" },
+  { value: "100%", label: "Made to your exact measurements" },
   { value: "2–3 wks", label: "Typical turnaround" },
   { value: "Small batch", label: "Orders accepted monthly — book early" },
 ];
