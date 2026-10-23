@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createServiceClient } from "@/lib/supabase/server";
-import { sendOrderStatusEmail, sendOrderDetailsUpdatedEmail } from "@/lib/resend";
+import { sendOrderStatusEmail, sendOrderDetailsUpdatedEmail, sendAdminNotification } from "@/lib/resend";
 import type { OrderStatus } from "@/types/db";
 
 export async function updateOrderStatus(formData: FormData) {
@@ -26,6 +26,12 @@ export async function updateOrderStatus(formData: FormData) {
       clientName: client.full_name,
       orderReference: order.reference,
       status,
+    });
+  }
+  if (order) {
+    await sendAdminNotification({
+      subject: `Order ${order.reference} status: ${status.replace(/_/g, " ")}`,
+      text: `${client?.full_name ?? "A customer"}'s order ${order.reference} was just marked "${status.replace(/_/g, " ")}".`,
     });
   }
 
