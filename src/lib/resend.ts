@@ -1,9 +1,24 @@
 import { Resend } from "resend";
+import { createServiceClient } from "@/lib/supabase/server";
 
-// Where the business owner hears about new signups, new order requests,
-// and status changes made by customers themselves. Reuses the public
-// contact address already shown in the footer rather than a second env var.
-const ADMIN_EMAIL = process.env.ADMIN_NOTIFICATION_EMAIL || process.env.NEXT_PUBLIC_CONTACT_EMAIL;
+// Fallback used only if the admin lookup below fails or returns nobody.
+const FALLBACK_ADMIN_EMAIL = process.env.ADMIN_NOTIFICATION_EMAIL || process.env.NEXT_PUBLIC_CONTACT_EMAIL;
+
+// Every account with app_metadata.role === 'admin' — there's more than one
+// (e.g. Tofunmi and the person managing the site), and all of them should
+// hear about new signups, order requests, and chat messages.
+async function getAdminEmails(): Promise<string[]> {
+  try {
+    const supabase = createServiceClient();
+    const { data } = await supabase.auth.admin.listUsers();
+    const emails = data.users
+      .filter((u) => u.app_metadata?.role === "admin" && u.email)
+      .map((u) => u.email as string);
+    return emails.length > 0 ? emails : FALLBACK_ADMIN_EMAIL ? [FALLBACK_ADMIN_EMAIL] : [];
+  } catch {
+    return FALLBACK_ADMIN_EMAIL ? [FALLBACK_ADMIN_EMAIL] : [];
+  }
+}
 
 // Email is a side effect, never a reason to fail the sign-up/order action
 // that triggered it, so failures are logged and swallowed here.
@@ -23,8 +38,8 @@ async function sendEmail(opts: { to: string; subject: string; text: string }) {
 }
 
 export async function sendAdminNotification(opts: { subject: string; text: string }) {
-  if (!ADMIN_EMAIL) return;
-  await sendEmail({ to: ADMIN_EMAIL, subject: opts.subject, text: opts.text });
+  const emails = await getAdminEmails();
+  await Promise.all(emails.map((to) => sendEmail({ to, subject: opts.subject, text: opts.text })));
 }
 
 export async function sendWelcomeEmail(opts: { to: string; name: string }) {

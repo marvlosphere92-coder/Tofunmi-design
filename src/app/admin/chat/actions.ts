@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
-import { CHAT_MAX_LENGTH } from "@/lib/chat";
+import { CHAT_MAX_LENGTH, isAllowedChatMediaUrl } from "@/lib/chat";
 import { sendChatMessageEmail } from "@/lib/resend";
 import type { ChatMessage } from "@/types/db";
 
@@ -12,12 +12,22 @@ async function requireAdmin() {
   if (data.user?.app_metadata?.role !== "admin") throw new Error("Not authorized.");
 }
 
-export async function sendAdminChatMessage(clientId: string, body: string): Promise<ChatMessage> {
+export async function sendAdminChatMessage(
+  clientId: string,
+  body: string,
+  mediaUrl?: string | null
+): Promise<ChatMessage> {
   await requireAdmin();
 
   const trimmed = body.trim();
-  if (!trimmed || trimmed.length > CHAT_MAX_LENGTH) {
-    throw new Error("Message must be between 1 and 2000 characters.");
+  if (trimmed.length > CHAT_MAX_LENGTH) {
+    throw new Error("Message must be under 2000 characters.");
+  }
+  if (!trimmed && !mediaUrl) {
+    throw new Error("Message can't be empty.");
+  }
+  if (mediaUrl && !isAllowedChatMediaUrl(mediaUrl)) {
+    throw new Error("Invalid image.");
   }
 
   const supabase = createServiceClient();
@@ -34,6 +44,7 @@ export async function sendAdminChatMessage(clientId: string, body: string): Prom
       client_id: clientId,
       sender_role: "admin",
       body: trimmed,
+      media_url: mediaUrl || null,
       read_by_client: false,
       read_by_admin: true,
     })
@@ -50,7 +61,7 @@ export async function sendAdminChatMessage(clientId: string, body: string): Prom
       to: client.email,
       recipientName: client.full_name,
       senderName: "SimplyBukky",
-      body: trimmed,
+      body: trimmed || "[Image]",
       chatUrl: `${base}/account/chat`,
     });
   }

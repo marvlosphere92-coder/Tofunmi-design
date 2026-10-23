@@ -39,7 +39,9 @@ export function AdminChatList({
               <p className="font-medium">{client.full_name}</p>
               <p className="text-sm text-foreground/70 truncate">
                 {lastMessage
-                  ? `${lastMessage.sender_role === "admin" ? "You: " : ""}${lastMessage.body}`
+                  ? `${lastMessage.sender_role === "admin" ? "You: " : ""}${
+                      lastMessage.body || (lastMessage.media_url ? "📷 Image" : "")
+                    }`
                   : "No messages yet"}
               </p>
             </div>

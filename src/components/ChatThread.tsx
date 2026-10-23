@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { CldUploadButton } from "next-cloudinary";
 import { createClient } from "@/lib/supabase/client";
 import type { ChatMessage } from "@/types/db";
 
@@ -19,13 +20,14 @@ export function ChatThread({
   role: "client" | "admin";
   initialMessages: ChatMessage[];
   otherPartyName: string;
-  sendMessage: (body: string) => Promise<ChatMessage>;
+  sendMessage: (body: string, mediaUrl?: string | null) => Promise<ChatMessage>;
   markRead: () => Promise<void>;
   fetchSince: (afterIso: string) => Promise<ChatMessage[]>;
 }) {
   const [messages, setMessages] = useState<PendingMessage[]>(initialMessages);
   const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
+  const [uploadError, setUploadError] = useState(false);
   const [connectionState, setConnectionState] = useState<"connecting" | "live" | "reconnecting">(
     "connecting"
   );
@@ -100,17 +102,15 @@ export function ChatThread({
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" });
   }, [messages.length]);
 
-  const handleSend = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const body = draft.trim();
-    if (!body || sending) return;
-
+  const doSend = async (body: string, mediaUrl?: string | null) => {
+    if (sending) return;
     const tempId = `temp-${crypto.randomUUID()}`;
     const optimistic: PendingMessage = {
       id: tempId,
       client_id: clientId,
       sender_role: role,
       body,
+      media_url: mediaUrl ?? null,
       read_by_client: role === "client",
       read_by_admin: role === "admin",
       created_at: new Date().toISOString(),
@@ -121,7 +121,7 @@ export function ChatThread({
     setSending(true);
 
     try {
-      const saved = await sendMessage(body);
+      const saved = await sendMessage(body, mediaUrl);
       setMessages((prev) => {
         const withoutTemp = prev.filter((m) => m.id !== tempId);
         if (withoutTemp.some((m) => m.id === saved.id)) return withoutTemp;
@@ -133,6 +133,13 @@ export function ChatThread({
     } finally {
       setSending(false);
     }
+  };
+
+  const handleSend = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const body = draft.trim();
+    if (!body) return;
+    await doSend(body);
   };
 
   return (
@@ -161,6 +168,17 @@ export function ChatThread({
                   mine ? "bg-accent text-white" : "bg-accent-soft/50 text-foreground"
                 } ${m.pending ? "opacity-60" : ""}`}
               >
+                {m.media_url && (
+                  <a href={m.media_url} target="_blank" rel="noopener noreferrer" className="block mb-1">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={m.media_url}
+                      alt="Shared"
+                      loading="lazy"
+                      className="max-h-64 rounded-lg object-contain bg-black/5"
+                    />
+                  </a>
+                )}
                 {m.body}
                 <div className={`mt-1 text-[10px] ${mine ? "text-white/70" : "text-foreground/60"}`}>
                   {m.failed
@@ -175,7 +193,21 @@ export function ChatThread({
         })}
       </div>
 
-      <form onSubmit={handleSend} className="border-t border-accent-soft p-3 flex gap-2">
+      <form onSubmit={handleSend} className="border-t border-accent-soft p-3 flex items-center gap-2">
+        <CldUploadButton
+          uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
+          options={{ multiple: false, maxFiles: 1, resourceType: "image" }}
+          className="flex-shrink-0 w-9 h-9 rounded-full border border-accent-soft flex items-center justify-center text-foreground/70 hover:bg-accent-soft transition disabled:opacity-50"
+          onSuccess={(result) => {
+            setUploadError(false);
+            if (typeof result.info !== "object" || !result.info || !("secure_url" in result.info)) return;
+            doSend(draft.trim(), result.info.secure_url as string);
+          }}
+          onError={() => setUploadError(true)}
+        >
+          <span aria-hidden="true">📷</span>
+          <span className="sr-only">Attach an image</span>
+        </CldUploadButton>
         <input
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
@@ -192,6 +224,9 @@ export function ChatThread({
           Send
         </button>
       </form>
+      {uploadError && (
+        <p className="px-3 pb-2 text-xs text-red-700">Couldn&apos;t upload that image — try again.</p>
+      )}
     </div>
   );
 }

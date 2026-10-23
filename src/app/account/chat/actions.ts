@@ -3,18 +3,24 @@
 import { revalidatePath } from "next/cache";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { getSignedInClient } from "@/app/account/actions";
-import { CHAT_MAX_LENGTH, isSendingTooFast } from "@/lib/chat";
+import { CHAT_MAX_LENGTH, isAllowedChatMediaUrl, isSendingTooFast } from "@/lib/chat";
 import { sendAdminNotification } from "@/lib/resend";
 import type { ChatMessage } from "@/types/db";
 
-export async function sendClientChatMessage(body: string): Promise<ChatMessage> {
+export async function sendClientChatMessage(body: string, mediaUrl?: string | null): Promise<ChatMessage> {
   const session = await createClient();
   const { data: userData } = await session.auth.getUser();
   if (!userData.user) throw new Error("Not signed in.");
 
   const trimmed = body.trim();
-  if (!trimmed || trimmed.length > CHAT_MAX_LENGTH) {
-    throw new Error("Message must be between 1 and 2000 characters.");
+  if (trimmed.length > CHAT_MAX_LENGTH) {
+    throw new Error("Message must be under 2000 characters.");
+  }
+  if (!trimmed && !mediaUrl) {
+    throw new Error("Message can't be empty.");
+  }
+  if (mediaUrl && !isAllowedChatMediaUrl(mediaUrl)) {
+    throw new Error("Invalid image.");
   }
 
   const supabase = createServiceClient();
@@ -37,6 +43,7 @@ export async function sendClientChatMessage(body: string): Promise<ChatMessage> 
       client_id: clientId,
       sender_role: "client",
       body: trimmed,
+      media_url: mediaUrl || null,
       read_by_client: true,
       read_by_admin: false,
     })
@@ -50,7 +57,7 @@ export async function sendClientChatMessage(body: string): Promise<ChatMessage> 
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
   await sendAdminNotification({
     subject: `New chat message from ${client?.full_name ?? "a customer"}`,
-    text: `${client?.full_name ?? "A customer"} says: "${trimmed}"\n\nReply here: ${base}/admin/chat/${clientId}`,
+    text: `${client?.full_name ?? "A customer"} says: "${trimmed || "[Image]"}"\n\nReply here: ${base}/admin/chat/${clientId}`,
   });
 
   revalidatePath("/account/chat");

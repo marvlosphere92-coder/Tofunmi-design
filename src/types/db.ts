@@ -106,6 +106,7 @@ export interface ChatMessage {
   client_id: string;
   sender_role: "client" | "admin";
   body: string;
+  media_url: string | null;
   read_by_client: boolean;
   read_by_admin: boolean;
   created_at: string;
