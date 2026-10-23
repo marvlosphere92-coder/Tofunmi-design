@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
-import { GoogleSignInButton } from "@/components/GoogleSignInButton";
-import { EmailSignInForm } from "@/components/EmailSignInForm";
+import { AuthTabs } from "@/components/AuthTabs";
 import { SubmitButton } from "@/components/SubmitButton";
 import { SinglePhotoUploadField } from "@/components/SinglePhotoUploadField";
 import { EditableBuyerReview } from "@/components/EditableBuyerReview";
@@ -20,22 +19,8 @@ export default async function AccountPage() {
       <>
         <SiteNav />
         <main className="flex-1 mx-auto max-w-md px-6 py-20 text-center">
-          <h1 className="font-serif text-2xl">Your account</h1>
-          <p className="mt-3 text-foreground/70">
-            Sign in to track your orders and see where each piece is in progress.
-          </p>
-          <p className="mt-1 text-sm text-foreground/50">
-            New here? There&apos;s no separate sign-up — signing in creates your account.
-          </p>
-          <div className="mt-8 flex justify-center">
-            <GoogleSignInButton />
-          </div>
-          <div className="mt-8 max-w-xs mx-auto">
-            <p className="text-xs uppercase tracking-wide text-foreground/50 mb-3">
-              Or, without Google
-            </p>
-            <EmailSignInForm />
-          </div>
+          <h1 className="font-serif text-2xl mb-6">Your account</h1>
+          <AuthTabs />
         </main>
         <SiteFooter />
       </>

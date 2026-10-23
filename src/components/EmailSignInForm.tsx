@@ -3,12 +3,17 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
-export function EmailSignInForm() {
+export function EmailSignInForm({ mode }: { mode: "signin" | "signup" }) {
   const [email, setEmail] = useState("");
+  const [fullName, setFullName] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error" | "rate_limited">("idle");
 
   if (status === "sent") {
-    return <p className="text-sm text-foreground/70">Check your email for a sign-in link.</p>;
+    return (
+      <p className="text-sm text-foreground/70">
+        Check your email for a {mode === "signup" ? "sign-up" : "sign-in"} link.
+      </p>
+    );
   }
 
   return (
@@ -19,7 +24,12 @@ export function EmailSignInForm() {
         const supabase = createClient();
         const { error } = await supabase.auth.signInWithOtp({
           email,
-          options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
+            // Only applied when this email creates a brand-new account —
+            // ignored for a returning user, so it's safe to always send.
+            data: mode === "signup" && fullName ? { full_name: fullName } : undefined,
+          },
         });
         if (!error) {
           setStatus("sent");
@@ -31,6 +41,16 @@ export function EmailSignInForm() {
       }}
       className="flex flex-col gap-2"
     >
+      {mode === "signup" && (
+        <input
+          type="text"
+          required
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          placeholder="Full name"
+          className="rounded-md border border-accent-soft px-3 py-2 text-sm"
+        />
+      )}
       <input
         type="email"
         required
@@ -49,6 +69,8 @@ export function EmailSignInForm() {
             <span className="w-3.5 h-3.5 rounded-full border-2 border-current border-t-transparent animate-spin" />
             Sending…
           </span>
+        ) : mode === "signup" ? (
+          "Email me a sign-up link"
         ) : (
           "Email me a sign-in link"
         )}
