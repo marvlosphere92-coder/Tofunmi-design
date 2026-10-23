@@ -29,32 +29,39 @@ export function SaveDesignButton({
   }
 
   return (
-    <button
-      type="button"
-      disabled={pending}
-      onClick={() => {
-        const next = !saved;
-        setSaved(next);
-        startTransition(async () => {
-          const formData = new FormData();
-          formData.set("designId", designId);
-          formData.set("saved", String(saved));
-          try {
-            await toggleSavedDesign(formData);
-          } catch {
-            setSaved(!next);
-          }
-        });
-      }}
-      className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition active:scale-95 disabled:opacity-60 ${
-        saved
-          ? "bg-accent border-accent text-white hover:opacity-90"
-          : "border-accent-soft hover:bg-accent-soft"
-      }`}
-    >
-      <HeartIcon filled={saved} />
-      {saved ? "Saved" : "Save"}
-    </button>
+    <div className="flex flex-col items-center gap-1.5">
+      <button
+        type="button"
+        disabled={pending}
+        onClick={() => {
+          const next = !saved;
+          setSaved(next);
+          startTransition(async () => {
+            const formData = new FormData();
+            formData.set("designId", designId);
+            formData.set("saved", String(saved));
+            try {
+              await toggleSavedDesign(formData);
+            } catch {
+              setSaved(!next);
+            }
+          });
+        }}
+        className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition active:scale-95 disabled:opacity-60 ${
+          saved
+            ? "bg-accent border-accent text-white hover:opacity-90"
+            : "border-accent-soft hover:bg-accent-soft"
+        }`}
+      >
+        <HeartIcon filled={saved} />
+        {saved ? "Saved" : "Save"}
+      </button>
+      {saved && (
+        <a href="/account#saved" className="text-xs text-foreground/70 underline hover:text-accent transition">
+          View your saved designs
+        </a>
+      )}
+    </div>
   );
 }
 

@@ -11,7 +11,7 @@ export default async function AdminLoginPage({
   return (
     <main className="min-h-screen flex items-center justify-center bg-plum px-6">
       <div className="w-full max-w-sm">
-        <p className="font-serif text-2xl text-center text-gold-soft mb-8">SimplyBukky</p>
+        <p className="font-serif text-2xl text-center text-gold-rich mb-8">SimplyBukky</p>
         <form action={signIn} className="space-y-4 bg-surface rounded-xl p-8 shadow-lg">
           <h1 className="font-serif text-xl text-center">Admin sign in</h1>
           {error && (

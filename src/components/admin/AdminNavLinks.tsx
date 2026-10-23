@@ -25,8 +25,8 @@ export function AdminNavLinks() {
           <Link
             key={l.href}
             href={l.href}
-            className={`transition hover:text-gold-soft ${
-              active ? "font-medium text-gold-soft underline underline-offset-4" : "text-white/80"
+            className={`transition hover:text-gold-rich ${
+              active ? "font-medium text-gold-rich underline underline-offset-4" : "text-white/80"
             }`}
           >
             {l.label}

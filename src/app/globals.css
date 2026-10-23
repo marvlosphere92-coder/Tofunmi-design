@@ -13,6 +13,7 @@
   --plum: #0f2d22; /* deep forest — solid band backgrounds (stats strip, admin header); name kept for minimal diff, no longer literally plum */
   --gold: #c9974a; /* warm gold, secondary accent for highlights */
   --gold-soft: #f3e6ce; /* soft gold tint for backgrounds */
+  --gold-rich: #d4af37; /* vivid metallic gold for text on dark backgrounds, 7.04:1 on --plum */
 }
 
 @theme inline {
@@ -24,6 +25,7 @@
   --color-plum: var(--plum);
   --color-gold: var(--gold);
   --color-gold-soft: var(--gold-soft);
+  --color-gold-rich: var(--gold-rich);
   --font-sans: var(--font-body);
   --font-serif: var(--font-heading);
 }

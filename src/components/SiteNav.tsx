@@ -2,6 +2,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { whatsappGeneralLink, formatPhoneDisplay } from "@/lib/whatsapp";
 import { Avatar } from "@/components/Avatar";
+import { SubmitButton } from "@/components/SubmitButton";
+import { signOutCustomer } from "@/app/account/actions";
 
 const navLinkClass =
   "relative after:absolute after:left-0 after:-bottom-1 after:h-px after:w-0 after:bg-accent after:transition-all after:duration-300 hover:text-accent hover:after:w-full";
@@ -55,13 +57,29 @@ export async function SiteNav() {
     (data.user?.user_metadata?.name as string | undefined) ||
     data.user?.email;
 
+  let savedCount = 0;
+  if (isCustomer && data.user) {
+    const { data: client } = await supabase
+      .from("clients")
+      .select("id")
+      .eq("user_id", data.user.id)
+      .maybeSingle();
+    if (client) {
+      const { count } = await supabase
+        .from("saved_designs")
+        .select("id", { count: "exact", head: true })
+        .eq("client_id", client.id);
+      savedCount = count ?? 0;
+    }
+  }
+
   return (
-    <header className="border-b border-accent-soft">
+    <header className="sticky top-0 z-50 border-b border-accent-soft bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <nav className="mx-auto max-w-6xl flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 sm:px-6 py-4 sm:py-5">
         <Link href="/" className="font-serif text-lg sm:text-2xl tracking-wide leading-tight">
           SimplyBukky
         </Link>
-        <div className="flex items-center gap-2 sm:gap-4 text-sm">
+        <div className="flex items-center gap-1 sm:gap-4 text-sm">
           <Link href="/designs" className={`${navLinkClass} flex items-center min-h-11 px-2`}>
             Lookbook
           </Link>
@@ -70,10 +88,25 @@ export async function SiteNav() {
               Reviews
             </Link>
           )}
+          {isCustomer && savedCount > 0 && (
+            <Link href="/account#saved" className={`${navLinkClass} flex items-center min-h-11 px-2`}>
+              Saved ({savedCount})
+            </Link>
+          )}
           <Link href="/account" className={`${navLinkClass} flex items-center gap-2 min-h-11 px-2`}>
             {isCustomer && displayName && <Avatar name={displayName} className="w-6 h-6 text-xs" />}
             {isCustomer ? "My orders" : "Sign in"}
           </Link>
+          {isCustomer && (
+            <form action={signOutCustomer}>
+              <SubmitButton
+                className="flex items-center min-h-11 px-2 text-foreground/70 hover:text-accent transition"
+                pendingText="Signing out…"
+              >
+                Sign out
+              </SubmitButton>
+            </form>
+          )}
         </div>
       </nav>
     </header>

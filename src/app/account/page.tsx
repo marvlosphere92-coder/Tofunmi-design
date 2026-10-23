@@ -222,7 +222,9 @@ export default async function AccountPage() {
 
         {savedDesigns.length > 0 && (
           <>
-            <h2 className="font-medium mt-10 mb-4">Saved designs</h2>
+            <h2 id="saved" className="font-medium mt-10 mb-4 scroll-mt-24">
+              Saved designs
+            </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
               {savedDesigns.map((d) => (
                 <div key={d.id} className="relative group">
