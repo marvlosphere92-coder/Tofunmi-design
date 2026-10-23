@@ -27,7 +27,7 @@ export function ReadReceiptsToggle({
           onChange={() => startTransition(() => formRef.current?.requestSubmit())}
           className="w-4 h-4 accent-accent"
         />
-        Show read receipts (so you can see when a customer has seen your message)
+        Let customers see when you&apos;ve read their messages
       </label>
       {pending && <span className="text-xs text-foreground/50">Saving…</span>}
     </form>

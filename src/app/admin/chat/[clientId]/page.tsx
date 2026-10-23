@@ -3,7 +3,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { ChatThread } from "@/components/ChatThread";
 import { sendAdminChatMessage, markChatReadByAdmin, fetchAdminChatSince } from "../actions";
-import type { Client, ChatMessage, CapacitySettings } from "@/types/db";
+import type { Client, ChatMessage } from "@/types/db";
 
 export default async function AdminChatThreadPage({
   params,
@@ -13,19 +13,17 @@ export default async function AdminChatThreadPage({
   const { clientId } = await params;
   const supabase = await createClient();
 
-  const [{ data: client }, { data: messages }, { data: capacity }] = await Promise.all([
+  const [{ data: client }, { data: messages }] = await Promise.all([
     supabase.from("clients").select("*").eq("id", clientId).single(),
     supabase
       .from("chat_messages")
       .select("*")
       .eq("client_id", clientId)
       .order("created_at", { ascending: true }),
-    supabase.from("capacity_settings").select("*").single(),
   ]);
 
   if (!client) notFound();
   const c = client as Client;
-  const receiptsEnabled = (capacity as CapacitySettings | null)?.chat_read_receipts_enabled ?? true;
 
   return (
     <div>
@@ -42,7 +40,9 @@ export default async function AdminChatThreadPage({
         sendMessage={sendAdminChatMessage.bind(null, clientId)}
         markRead={markChatReadByAdmin.bind(null, clientId)}
         fetchSince={fetchAdminChatSince.bind(null, clientId)}
-        receiptsEnabled={receiptsEnabled}
+        // Admin always sees whether the client has read her messages; the
+        // site-wide toggle only controls what clients see.
+        receiptsEnabled
       />
     </div>
   );
