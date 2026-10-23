@@ -7,7 +7,7 @@ export default async function AdminOrdersPage() {
   const { data: orders } = await supabase
     .from("orders")
     .select(
-      "id, reference, status, event_date, budget_note, estimated_price, final_price, created_at, own_fabric, clients(full_name, phone), designs(title), materials(name, price_per_yard), measurements(id, source, verified, bust, waist, hip, shoulder, sleeve_length, back_length, inseam, notes)"
+      "id, reference, status, event_date, budget_note, estimated_price, final_price, created_at, own_fabric, clients(full_name, phone), designs(title, cover_photo_url), materials(name, price_per_yard), measurements(id, source, verified, bust, waist, hip, shoulder, sleeve_length, back_length, inseam, notes)"
     )
     .order("created_at", { ascending: false });
 

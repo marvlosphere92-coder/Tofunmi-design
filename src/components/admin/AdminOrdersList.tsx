@@ -25,7 +25,7 @@ export interface OrderRow {
   final_price: number | null;
   own_fabric: boolean;
   clients: { full_name: string; phone: string } | null;
-  designs: { title: string } | null;
+  designs: { title: string; cover_photo_url: string | null } | null;
   materials: { name: string; price_per_yard: number } | null;
   measurements: {
     id: string;
@@ -94,13 +94,25 @@ export function AdminOrdersList({
           return (
             <div key={o.id} className="rounded-lg border border-accent-soft p-4 space-y-3">
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <p className="font-medium">
-                    {o.reference} — {client?.full_name ?? "Unknown"}
-                  </p>
-                  <p className="text-sm text-foreground/70">
-                    {design?.title ?? "—"} · {client?.phone}
-                  </p>
+                <div className="flex items-center gap-3">
+                  {design?.cover_photo_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={design.cover_photo_url}
+                      alt=""
+                      className="w-12 h-12 rounded-md object-cover flex-shrink-0"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-md bg-accent-soft flex-shrink-0" />
+                  )}
+                  <div>
+                    <p className="font-medium">
+                      {o.reference} — {client?.full_name ?? "Unknown"}
+                    </p>
+                    <p className="text-sm text-foreground/70">
+                      {design?.title ?? "—"} · {client?.phone}
+                    </p>
+                  </div>
                 </div>
                 <form action={updateOrderStatus} className="flex items-center gap-2">
                   <input type="hidden" name="orderId" value={o.id} />

@@ -1,14 +1,18 @@
 import { createClient } from "@/lib/supabase/server";
 import { AdminChatList } from "@/components/admin/AdminChatList";
-import type { Client, ChatMessage } from "@/types/db";
+import { ReadReceiptsToggle } from "@/components/admin/ReadReceiptsToggle";
+import { setChatReadReceiptsEnabled } from "./actions";
+import type { Client, ChatMessage, CapacitySettings } from "@/types/db";
 
 export default async function AdminChatPage() {
   const supabase = await createClient();
 
-  const [{ data: clients }, { data: messages }] = await Promise.all([
+  const [{ data: clients }, { data: messages }, { data: capacity }] = await Promise.all([
     supabase.from("clients").select("*").order("created_at", { ascending: false }),
     supabase.from("chat_messages").select("*").order("created_at", { ascending: false }),
+    supabase.from("capacity_settings").select("*").single(),
   ]);
+  const receiptsEnabled = (capacity as CapacitySettings | null)?.chat_read_receipts_enabled ?? true;
 
   const allMessages = (messages ?? []) as ChatMessage[];
   const lastMessageByClient = new Map<string, ChatMessage>();
@@ -35,7 +39,10 @@ export default async function AdminChatPage() {
 
   return (
     <div>
-      <h1 className="font-serif text-2xl mb-6">Messages</h1>
+      <h1 className="font-serif text-2xl mb-3">Messages</h1>
+      <div className="mb-6">
+        <ReadReceiptsToggle enabled={receiptsEnabled} action={setChatReadReceiptsEnabled} />
+      </div>
       <AdminChatList threads={threads} />
     </div>
   );

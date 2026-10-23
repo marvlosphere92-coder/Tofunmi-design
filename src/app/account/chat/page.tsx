@@ -5,7 +5,7 @@ import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { ChatThread } from "@/components/ChatThread";
 import { getSignedInClient } from "@/app/account/actions";
 import { sendClientChatMessage, markChatReadByClient, fetchClientChatSince } from "./actions";
-import type { ChatMessage } from "@/types/db";
+import type { ChatMessage, CapacitySettings } from "@/types/db";
 
 export default async function AccountChatPage() {
   const supabase = await createClient();
@@ -16,11 +16,15 @@ export default async function AccountChatPage() {
   if (!clientId) redirect("/account");
 
   const service = createServiceClient();
-  const { data: messages } = await service
-    .from("chat_messages")
-    .select("*")
-    .eq("client_id", clientId)
-    .order("created_at", { ascending: true });
+  const [{ data: messages }, { data: capacity }] = await Promise.all([
+    service
+      .from("chat_messages")
+      .select("*")
+      .eq("client_id", clientId)
+      .order("created_at", { ascending: true }),
+    service.from("capacity_settings").select("*").single(),
+  ]);
+  const receiptsEnabled = (capacity as CapacitySettings | null)?.chat_read_receipts_enabled ?? true;
 
   return (
     <>
@@ -38,6 +42,7 @@ export default async function AccountChatPage() {
           sendMessage={sendClientChatMessage}
           markRead={markChatReadByClient}
           fetchSince={fetchClientChatSince}
+          receiptsEnabled={receiptsEnabled}
         />
       </main>
       <SiteFooter />

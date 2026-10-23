@@ -86,6 +86,17 @@ export async function markChatReadByAdmin(clientId: string) {
   revalidatePath("/admin/chat");
 }
 
+export async function setChatReadReceiptsEnabled(formData: FormData) {
+  await requireAdmin();
+  const supabase = createServiceClient();
+  const enabled = formData.get("enabled") === "on";
+
+  await supabase.from("capacity_settings").update({ chat_read_receipts_enabled: enabled }).eq("id", 1);
+
+  revalidatePath("/admin/chat");
+  revalidatePath("/account/chat");
+}
+
 export async function fetchAdminChatSince(clientId: string, afterIso: string): Promise<ChatMessage[]> {
   await requireAdmin();
   const supabase = createServiceClient();

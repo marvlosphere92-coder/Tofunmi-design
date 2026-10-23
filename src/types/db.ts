@@ -64,6 +64,7 @@ export interface Material {
 export interface CapacitySettings {
   accepting_orders: boolean;
   booked_until: string | null;
+  chat_read_receipts_enabled: boolean;
 }
 
 export interface Client {

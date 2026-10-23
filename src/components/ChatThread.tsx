@@ -21,6 +21,7 @@ export function ChatThread({
   sendMessage,
   markRead,
   fetchSince,
+  receiptsEnabled = true,
 }: {
   clientId: string;
   role: "client" | "admin";
@@ -29,6 +30,7 @@ export function ChatThread({
   sendMessage: (body: string, mediaUrl?: string | null) => Promise<ChatMessage>;
   markRead: () => Promise<void>;
   fetchSince: (afterIso: string) => Promise<ChatMessage[]>;
+  receiptsEnabled?: boolean;
 }) {
   const [messages, setMessages] = useState<PendingMessage[]>(initialMessages);
   const [draft, setDraft] = useState("");
@@ -77,6 +79,16 @@ export function ChatThread({
           if ((payload.new as ChatMessage).sender_role !== role) {
             markRead().catch(() => {});
           }
+        }
+      )
+      .on(
+        // Picks up read-receipt flips (read_by_client/read_by_admin) on
+        // messages the other side just opened — those are UPDATEs, not
+        // INSERTs, so they need their own binding to show up live.
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "chat_messages", filter: `client_id=eq.${clientId}` },
+        (payload) => {
+          upsert([payload.new as ChatMessage]);
         }
       )
       .subscribe((status) => {
@@ -238,12 +250,21 @@ export function ChatThread({
                   )
                 )}
                 {m.body}
-                <div className={`mt-1 text-[10px] ${mine ? "text-white/70" : "text-foreground/60"}`}>
+                <div
+                  className={`mt-1 flex items-center justify-end gap-1 text-[10px] ${
+                    mine ? "text-white/70" : "text-foreground/60"
+                  }`}
+                >
                   {m.failed
                     ? "Failed to send"
                     : m.pending
                     ? "Sending…"
                     : new Date(m.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                  {mine && receiptsEnabled && !m.pending && !m.failed && (
+                    <ReceiptTicks
+                      read={role === "client" ? m.read_by_admin : m.read_by_client}
+                    />
+                  )}
                 </div>
               </div>
             </div>
@@ -314,6 +335,24 @@ function SendIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 translate-x-[1px]">
       <path d="M3 11.5 21 3l-6 18-4-7-8-2.5Z" />
+    </svg>
+  );
+}
+
+function ReceiptTicks({ read }: { read: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 20 12"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={`w-4 h-3 flex-shrink-0 ${read ? "text-gold-rich" : ""}`}
+      aria-label={read ? "Seen" : "Sent"}
+    >
+      <path d="m1 6 3.5 3.5L11 3" />
+      <path d="m8 6 3.5 3.5L18.5 3" />
     </svg>
   );
 }
