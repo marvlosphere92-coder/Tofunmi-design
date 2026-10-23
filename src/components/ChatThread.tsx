@@ -267,12 +267,12 @@ export function ChatThread({
           disabled={uploading}
           aria-label="Attach an image or video"
           title="Attach an image or video"
-          className="flex-shrink-0 w-9 h-9 rounded-full border border-accent-soft flex items-center justify-center text-accent hover:bg-accent-soft transition disabled:opacity-50"
+          className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-foreground/60 hover:bg-accent-soft transition disabled:opacity-50"
         >
           {uploading ? (
             <span className="w-4 h-4 rounded-full border-2 border-accent border-t-transparent animate-spin" />
           ) : (
-            <ImageIcon />
+            <PaperclipIcon />
           )}
         </button>
         <input
@@ -286,9 +286,11 @@ export function ChatThread({
         <button
           type="submit"
           disabled={!draft.trim() || sending}
-          className="rounded-full bg-accent text-white px-5 py-2 text-sm disabled:opacity-50"
+          aria-label="Send"
+          title="Send"
+          className="flex-shrink-0 w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center disabled:opacity-50 transition hover:opacity-90 active:scale-95"
         >
-          Send
+          <SendIcon />
         </button>
       </form>
       {uploadError && <p className="px-3 pb-2 text-xs text-red-700">{uploadError}</p>}
@@ -296,12 +298,22 @@ export function ChatThread({
   );
 }
 
-function ImageIcon() {
+function PaperclipIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
-      <rect x="3" y="4" width="18" height="16" rx="2" />
-      <circle cx="8.5" cy="9.5" r="1.5" />
-      <path strokeLinecap="round" strokeLinejoin="round" d="m4 17 5-5 3.5 3.5L17 11l3 3" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-5 h-5">
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M19.5 10.5 11 19a4 4 0 0 1-5.66-5.66l8.49-8.49a2.67 2.67 0 0 1 3.77 3.77l-8.49 8.49a1.33 1.33 0 0 1-1.89-1.89l7.07-7.07"
+      />
+    </svg>
+  );
+}
+
+function SendIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 translate-x-[1px]">
+      <path d="M3 11.5 21 3l-6 18-4-7-8-2.5Z" />
     </svg>
   );
 }
