@@ -9,12 +9,17 @@ import type { Design } from "@/types/db";
 
 export default async function AdminDesignsPage() {
   const supabase = await createClient();
-  const { data: designs } = await supabase
-    .from("designs")
-    .select("*")
-    .order("display_order", { ascending: true });
+  const [{ data: designs }, { data: orders }] = await Promise.all([
+    supabase.from("designs").select("*").order("display_order", { ascending: true }),
+    supabase.from("orders").select("design_id"),
+  ]);
 
   const list = (designs ?? []) as Design[];
+  const orderCounts: Record<string, number> = {};
+  for (const o of orders ?? []) {
+    if (!o.design_id) continue;
+    orderCounts[o.design_id] = (orderCounts[o.design_id] ?? 0) + 1;
+  }
 
   return (
     <div className="space-y-10">
@@ -128,9 +133,18 @@ export default async function AdminDesignsPage() {
                   <div className="w-14 h-14 rounded-md bg-accent-soft flex-shrink-0" />
                 )}
                 <div>
-                  <p className="font-medium">
+                  <p className="font-medium flex items-center gap-2 flex-wrap">
                     {d.reference} — {d.title}
-                    {!d.active && <span className="ml-2 text-xs text-accent">draft</span>}
+                    {!d.active && <span className="text-xs text-accent">draft</span>}
+                    {orderCounts[d.id] > 0 && (
+                      <span
+                        className="inline-flex items-center gap-1 rounded-full bg-gold-soft text-foreground/80 text-xs px-2 py-0.5"
+                        title={`Ordered ${orderCounts[d.id]} time${orderCounts[d.id] === 1 ? "" : "s"}`}
+                      >
+                        <BagIcon />
+                        {orderCounts[d.id]}
+                      </span>
+                    )}
                   </p>
                   <p className="text-sm text-foreground/70">
                     {d.category}
@@ -164,5 +178,14 @@ export default async function AdminDesignsPage() {
         </div>
       </section>
     </div>
+  );
+}
+
+function BagIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-3.5 h-3.5">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M6 7h12l1 13H5L6 7Z" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 10V6a3 3 0 0 1 6 0v4" />
+    </svg>
   );
 }
