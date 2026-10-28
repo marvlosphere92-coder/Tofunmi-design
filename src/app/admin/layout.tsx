@@ -25,7 +25,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <header className="bg-plum text-white">
+      <header className="sticky top-0 z-50 bg-plum text-white">
         <div className="mx-auto max-w-5xl flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 sm:px-6 py-3">
           <p className="font-serif text-lg tracking-wide">SimplyBukky</p>
           <span

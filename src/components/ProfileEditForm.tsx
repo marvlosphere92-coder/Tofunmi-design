@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { SubmitButton } from "@/components/SubmitButton";
+import { PhoneInput } from "@/components/PhoneInput";
 
 export function ProfileEditForm({
   fullName,
@@ -50,7 +51,7 @@ export function ProfileEditForm({
       </label>
       <label className="text-xs text-foreground/70">
         Phone (WhatsApp)
-        <input
+        <PhoneInput
           name="phone"
           defaultValue={phone ?? ""}
           placeholder="e.g. 2348012345678"

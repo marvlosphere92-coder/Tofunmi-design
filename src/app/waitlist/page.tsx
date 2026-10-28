@@ -1,6 +1,7 @@
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { joinWaitlist } from "./actions";
 import { SubmitButton } from "@/components/SubmitButton";
+import { PhoneInput } from "@/components/PhoneInput";
 
 export default async function WaitlistPage({
   searchParams,
@@ -33,13 +34,10 @@ export default async function WaitlistPage({
           </label>
           <label className="block text-sm font-medium" htmlFor="phone">
             Phone (WhatsApp number)
-            <input
+            <PhoneInput
               id="phone"
               name="phone"
-              type="tel"
               required
-              autoComplete="tel"
-              inputMode="tel"
               className="block w-full rounded-md border border-accent-soft px-3 py-2 text-base mt-1 font-normal"
             />
           </label>

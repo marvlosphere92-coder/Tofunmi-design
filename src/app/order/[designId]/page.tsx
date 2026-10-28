@@ -5,6 +5,7 @@ import { submitOrder } from "./actions";
 import { SubmitButton } from "@/components/SubmitButton";
 import { OrderFabricFields } from "@/components/OrderFabricFields";
 import { OrderMeasurementFields } from "@/components/OrderMeasurementFields";
+import { PhoneInput } from "@/components/PhoneInput";
 import type { Design, Material } from "@/types/db";
 
 export default async function OrderPage({
@@ -60,13 +61,10 @@ export default async function OrderPage({
             </label>
             <label className="block text-sm font-medium" htmlFor="phone">
               Phone (WhatsApp number)
-              <input
+              <PhoneInput
                 id="phone"
                 name="phone"
-                type="tel"
                 required
-                autoComplete="tel"
-                inputMode="tel"
                 placeholder="e.g. 2348012345678"
                 className="block w-full rounded-md border border-accent-soft px-3 py-2 text-base mt-1 font-normal"
               />
