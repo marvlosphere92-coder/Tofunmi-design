@@ -14,8 +14,8 @@ const body = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "SimplyBukky | Bespoke Fashion",
-  description: "Bespoke and ready-to-wear fashion, made by hand.",
+  title: "SimplyBukky | Custom Fashion",
+  description: "Custom and ready-to-wear fashion, made by hand.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

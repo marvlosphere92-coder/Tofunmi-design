@@ -21,7 +21,7 @@ export async function generateMetadata({
   if (!data) return {};
   const design = data as Design;
   const description =
-    design.description ?? `Bespoke ${design.category} piece from SimplyBukky, made to your measurements.`;
+    design.description ?? `Custom ${design.category} piece from SimplyBukky, made to your measurements.`;
   return {
     title: `${design.title} | SimplyBukky`,
     description,

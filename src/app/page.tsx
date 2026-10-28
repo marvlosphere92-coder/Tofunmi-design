@@ -62,8 +62,8 @@ export default async function Home() {
           <HeroReveal
             title={
               <>
-                Bespoke fashion,
-                <br /> made just for you
+                Custom fashion,
+                <br /> made for you
               </>
             }
             cta={{ href: "/designs", label: "View the Lookbook" }}

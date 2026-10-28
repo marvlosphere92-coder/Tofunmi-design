@@ -163,7 +163,7 @@ export async function SiteFooter() {
         <div>
           <p className="font-serif text-xl tracking-wide">SimplyBukky</p>
           <p className="mt-2 text-foreground/70">
-            Bespoke fashion, made by hand — one piece at a time.
+            Custom fashion, made by hand — one piece at a time.
           </p>
         </div>
         <div>
