@@ -98,7 +98,9 @@ export async function SiteNav() {
   return (
     <header className="sticky top-0 z-50 border-b border-accent-soft bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <nav className="mx-auto max-w-6xl flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 sm:px-6 py-4 sm:py-5">
-        <Link href="/" className="font-serif text-lg sm:text-2xl tracking-wide leading-tight">
+        <Link href="/" className="flex items-center gap-2 font-serif text-lg sm:text-2xl tracking-wide leading-tight">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo-mark.png" alt="" className="h-8 sm:h-9 w-auto" />
           SimplyBukky
         </Link>
         <div className="flex items-center gap-1 sm:gap-4 text-sm">
@@ -161,7 +163,11 @@ export async function SiteFooter() {
     <footer className="border-t border-accent-soft mt-16 bg-accent-soft/20">
       <div className="mx-auto max-w-6xl px-6 py-12 grid gap-10 sm:grid-cols-3 text-sm">
         <div>
-          <p className="font-serif text-xl tracking-wide">SimplyBukky</p>
+          <p className="flex items-center gap-2 font-serif text-xl tracking-wide">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo-mark.png" alt="" className="h-7 w-auto" />
+            SimplyBukky
+          </p>
           <p className="mt-2 text-foreground/70">
             Custom fashion, made by hand — one piece at a time.
           </p>

@@ -27,7 +27,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     <div className="min-h-screen flex flex-col bg-background">
       <header className="sticky top-0 z-50 bg-plum text-white">
         <div className="mx-auto max-w-5xl flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 sm:px-6 py-3">
-          <p className="font-serif text-lg tracking-wide">SimplyBukky</p>
+          <p className="flex items-center gap-2 font-serif text-lg tracking-wide">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo-badge.png" alt="" className="h-8 w-8 rounded-md" />
+            SimplyBukky
+          </p>
           <span
             className={`rounded-full px-3 py-1 text-xs font-medium ${
               accepting ? "bg-emerald-500/20 text-emerald-300" : "bg-red-500/20 text-red-300"
