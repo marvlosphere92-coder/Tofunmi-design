@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { CldUploadButton } from "next-cloudinary";
+import { useRef, useState } from "react";
+
+const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
 
 export function SinglePhotoUploadField({
   name = "photoUrl",
@@ -11,6 +12,44 @@ export function SinglePhotoUploadField({
   initialPhoto?: string | null;
 }) {
   const [photo, setPhoto] = useState<string | null>(initialPhoto);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFilePicked = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setError("Please choose an image file.");
+      return;
+    }
+    if (file.size > MAX_IMAGE_BYTES) {
+      setError("That image is too large (max 8MB).");
+      return;
+    }
+
+    setError(null);
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!);
+
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+        { method: "POST", body: formData }
+      );
+      if (!res.ok) throw new Error("Upload failed");
+      const data = await res.json();
+      setPhoto(data.secure_url as string);
+    } catch {
+      setError("Couldn't upload that photo — try again.");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   return (
     <div className="space-y-2">
@@ -30,19 +69,24 @@ export function SinglePhotoUploadField({
       )}
       {photo && <input type="hidden" name={name} value={photo} />}
 
-      <CldUploadButton
-        uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
-        options={{ multiple: false, maxFiles: 1, resourceType: "image" }}
-        className="rounded-md border border-accent-soft px-3 py-2 text-sm transition hover:bg-accent-soft active:scale-95"
-        onSuccess={(result) => {
-          if (typeof result.info !== "object" || !result.info || !("secure_url" in result.info)) {
-            return;
-          }
-          setPhoto(result.info.secure_url as string);
-        }}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleFilePicked}
+        className="hidden"
+        aria-hidden="true"
+        tabIndex={-1}
+      />
+      <button
+        type="button"
+        onClick={() => fileInputRef.current?.click()}
+        disabled={uploading}
+        className="rounded-md border border-accent-soft px-3 py-2 text-sm transition hover:bg-accent-soft active:scale-95 disabled:opacity-60"
       >
-        {photo ? "Replace photo" : "Add a photo (optional)"}
-      </CldUploadButton>
+        {uploading ? "Uploading…" : photo ? "Replace photo" : "Add a photo (optional)"}
+      </button>
+      {error && <p className="text-xs text-red-600">{error}</p>}
     </div>
   );
 }

@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { createServiceClient } from "@/lib/supabase/server";
 import { sendOrderStatusEmail, sendOrderDetailsUpdatedEmail, sendAdminNotification } from "@/lib/resend";
 import type { OrderStatus } from "@/types/db";
@@ -16,8 +17,12 @@ export async function updateOrderStatus(formData: FormData) {
     .eq("id", orderId)
     .single();
 
-  await supabase.from("orders").update({ status }).eq("id", orderId);
-  await supabase.from("order_status_events").insert({ order_id: orderId, status });
+  const { error } = await supabase.from("orders").update({ status }).eq("id", orderId);
+  if (error) throw new Error(`Could not update the order's status: ${error.message}`);
+  const { error: eventError } = await supabase
+    .from("order_status_events")
+    .insert({ order_id: orderId, status });
+  if (eventError) throw new Error(`Could not record the status change: ${eventError.message}`);
 
   const client = order?.clients as unknown as { full_name: string; email: string | null } | null;
   if (order && client?.email) {
@@ -36,13 +41,16 @@ export async function updateOrderStatus(formData: FormData) {
   }
 
   revalidatePath("/admin/orders");
+  redirect("/admin/orders?success=status-updated");
 }
 
 export async function verifyMeasurement(formData: FormData) {
   const supabase = createServiceClient();
   const measurementId = String(formData.get("measurementId"));
-  await supabase.from("measurements").update({ verified: true }).eq("id", measurementId);
+  const { error } = await supabase.from("measurements").update({ verified: true }).eq("id", measurementId);
+  if (error) throw new Error(`Could not mark the measurement verified: ${error.message}`);
   revalidatePath("/admin/orders");
+  redirect("/admin/orders?success=measurement-verified");
 }
 
 export async function updateOrderDetails(formData: FormData) {
@@ -59,7 +67,7 @@ export async function updateOrderDetails(formData: FormData) {
     .eq("id", orderId)
     .single();
 
-  await supabase
+  const { error } = await supabase
     .from("orders")
     .update({
       event_date: eventDate,
@@ -68,6 +76,7 @@ export async function updateOrderDetails(formData: FormData) {
       final_price: finalPrice,
     })
     .eq("id", orderId);
+  if (error) throw new Error(`Could not save those details: ${error.message}`);
 
   const client = order?.clients as unknown as { full_name: string; email: string | null } | null;
   if (order && client?.email) {
@@ -82,4 +91,16 @@ export async function updateOrderDetails(formData: FormData) {
   }
 
   revalidatePath("/admin/orders");
+  redirect("/admin/orders?success=details-saved");
+}
+
+export async function deleteOrder(formData: FormData) {
+  const supabase = createServiceClient();
+  const orderId = String(formData.get("orderId"));
+
+  const { error } = await supabase.from("orders").delete().eq("id", orderId);
+  if (error) throw new Error(`Could not delete the order: ${error.message}`);
+
+  revalidatePath("/admin/orders");
+  redirect("/admin/orders?success=order-deleted");
 }

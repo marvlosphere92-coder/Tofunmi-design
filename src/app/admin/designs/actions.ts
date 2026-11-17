@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { createServiceClient } from "@/lib/supabase/server";
 
 async function nextReference(supabase: ReturnType<typeof createServiceClient>) {
@@ -61,6 +62,7 @@ export async function createDesign(formData: FormData) {
   if (error) throw new Error(`Could not save the design: ${error.message}`);
 
   revalidateDesignPaths();
+  redirect(`/admin/designs?success=${isDraft ? "saved-as-draft" : "published"}`);
 }
 
 export async function toggleDesignActive(formData: FormData) {
@@ -72,6 +74,7 @@ export async function toggleDesignActive(formData: FormData) {
   if (error) throw new Error(`Could not update the design: ${error.message}`);
 
   revalidateDesignPaths();
+  redirect(`/admin/designs?success=${active ? "hidden" : "published"}`);
 }
 
 export async function moveDesign(formData: FormData) {
@@ -126,6 +129,7 @@ export async function updateDesign(formData: FormData) {
 
   revalidateDesignPaths();
   revalidatePath(`/admin/designs/${id}/edit`);
+  redirect(`/admin/designs/${id}/edit?success=saved`);
 }
 
 export async function deleteDesign(formData: FormData) {
@@ -136,4 +140,5 @@ export async function deleteDesign(formData: FormData) {
   if (error) throw new Error(`Could not delete the design: ${error.message}`);
 
   revalidateDesignPaths();
+  redirect("/admin/designs?success=deleted");
 }

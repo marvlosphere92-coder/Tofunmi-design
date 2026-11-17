@@ -4,11 +4,17 @@ import { fetchAllRows } from "@/lib/supabase/fetchAll";
 import { DesignMediaUploadField } from "@/components/DesignMediaUploadField";
 import { SubmitButton } from "@/components/SubmitButton";
 import { ConfirmDeleteForm } from "@/components/ConfirmDeleteForm";
+import { SuccessBanner } from "@/components/admin/SuccessBanner";
 import { createDesign, toggleDesignActive, moveDesign, deleteDesign } from "./actions";
 import { SUGGESTED_CATEGORIES } from "@/types/db";
 import type { Design } from "@/types/db";
 
-export default async function AdminDesignsPage() {
+export default async function AdminDesignsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ success?: string }>;
+}) {
+  const { success } = await searchParams;
   const supabase = await createClient();
   const [{ data: designs }, orders] = await Promise.all([
     supabase.from("designs").select("*").order("display_order", { ascending: true }),
@@ -28,6 +34,7 @@ export default async function AdminDesignsPage() {
 
   return (
     <div className="space-y-10">
+      <SuccessBanner success={success} />
       <section>
         <h1 className="font-serif text-2xl mb-4">Add a design</h1>
         <form action={createDesign} className="space-y-3 max-w-md">

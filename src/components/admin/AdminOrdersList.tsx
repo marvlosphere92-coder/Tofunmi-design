@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { SubmitButton } from "@/components/SubmitButton";
+import { ConfirmDeleteForm } from "@/components/ConfirmDeleteForm";
 
 const statuses = [
   "requested",
@@ -57,11 +58,13 @@ export function AdminOrdersList({
   updateOrderStatus,
   updateOrderDetails,
   verifyMeasurement,
+  deleteOrder,
 }: {
   orders: OrderRow[];
   updateOrderStatus: (formData: FormData) => void;
   updateOrderDetails: (formData: FormData) => void;
   verifyMeasurement: (formData: FormData) => void;
+  deleteOrder: (formData: FormData) => void;
 }) {
   const [search, setSearch] = useState("");
 
@@ -110,7 +113,8 @@ export function AdminOrdersList({
                       {o.reference} — {client?.full_name ?? "Unknown"}
                     </p>
                     <p className="text-sm text-foreground/70">
-                      {design?.title ?? "—"} · {client?.phone}
+                      {design?.title ?? "No design linked"}
+                      {client?.phone && <> · Phone: {client.phone}</>}
                     </p>
                   </div>
                 </div>
@@ -257,6 +261,21 @@ export function AdminOrdersList({
                   Save details
                 </SubmitButton>
               </form>
+
+              <div className="flex items-center justify-between border-t border-accent-soft pt-3">
+                <p className="text-xs text-foreground/60">
+                  Test order, or placed by mistake? Delete it below. For a real order you&apos;re
+                  stopping work on, choose <span className="font-medium">cancelled</span> in the
+                  status dropdown above instead — that keeps the record.
+                </p>
+                <ConfirmDeleteForm
+                  action={deleteOrder}
+                  hiddenFields={{ orderId: o.id }}
+                  confirmMessage={`Permanently delete order ${o.reference} (${client?.full_name ?? "Unknown"})? This can't be undone. To keep a record instead, close this and set its status to "cancelled".`}
+                  label="Delete order"
+                  className="flex-shrink-0 text-sm underline text-red-700 transition hover:opacity-70"
+                />
+              </div>
             </div>
           );
         })}

@@ -1,9 +1,15 @@
 import { createClient } from "@/lib/supabase/server";
 import { fetchAllRows } from "@/lib/supabase/fetchAll";
 import { AdminOrdersList, type OrderRow } from "@/components/admin/AdminOrdersList";
-import { updateOrderStatus, updateOrderDetails, verifyMeasurement } from "./actions";
+import { SuccessBanner } from "@/components/admin/SuccessBanner";
+import { updateOrderStatus, updateOrderDetails, verifyMeasurement, deleteOrder } from "./actions";
 
-export default async function AdminOrdersPage() {
+export default async function AdminOrdersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ success?: string }>;
+}) {
+  const { success } = await searchParams;
   const supabase = await createClient();
   // This is the admin's only view of orders — a plain .select() would
   // quietly hide every order past this project's 1000-row cap instead
@@ -29,11 +35,13 @@ export default async function AdminOrdersPage() {
   return (
     <div>
       <h1 className="font-serif text-2xl mb-6">Orders</h1>
+      <SuccessBanner success={success} />
       <AdminOrdersList
         orders={rows}
         updateOrderStatus={updateOrderStatus}
         updateOrderDetails={updateOrderDetails}
         verifyMeasurement={verifyMeasurement}
+        deleteOrder={deleteOrder}
       />
     </div>
   );

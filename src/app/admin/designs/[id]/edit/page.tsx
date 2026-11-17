@@ -2,16 +2,20 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { DesignMediaUploadField } from "@/components/DesignMediaUploadField";
 import { SubmitButton } from "@/components/SubmitButton";
+import { SuccessBanner } from "@/components/admin/SuccessBanner";
 import { updateDesign } from "../../actions";
 import { SUGGESTED_CATEGORIES } from "@/types/db";
 import type { Design } from "@/types/db";
 
 export default async function EditDesignPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ success?: string }>;
 }) {
   const { id } = await params;
+  const { success } = await searchParams;
   const supabase = await createClient();
   const { data } = await supabase.from("designs").select("*").eq("id", id).single();
 
@@ -23,6 +27,7 @@ export default async function EditDesignPage({
       <h1 className="font-serif text-2xl mb-6">
         Edit: {d.reference} — {d.title}
       </h1>
+      <SuccessBanner success={success} />
       <form action={updateDesign} className="space-y-3 max-w-md">
         <input type="hidden" name="designId" value={d.id} />
         <input
