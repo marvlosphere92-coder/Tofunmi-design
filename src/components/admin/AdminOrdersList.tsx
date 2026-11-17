@@ -67,11 +67,19 @@ export function AdminOrdersList({
   deleteOrder: (formData: FormData) => void;
 }) {
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string | null>(null);
+
+  const statusCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const o of orders) counts[o.status] = (counts[o.status] ?? 0) + 1;
+    return counts;
+  }, [orders]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (!q) return orders;
     return orders.filter((o) => {
+      if (statusFilter && o.status !== statusFilter) return false;
+      if (!q) return true;
       const client = o.clients;
       return (
         o.reference.toLowerCase().includes(q) ||
@@ -80,7 +88,7 @@ export function AdminOrdersList({
         o.designs?.title?.toLowerCase().includes(q)
       );
     });
-  }, [orders, search]);
+  }, [orders, search, statusFilter]);
 
   return (
     <div>
@@ -88,8 +96,37 @@ export function AdminOrdersList({
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         placeholder="Search by name, phone, reference, or design…"
-        className="w-full rounded-md border border-accent-soft px-3 py-2 mb-4"
+        className="w-full rounded-md border border-accent-soft px-3 py-2 mb-3"
       />
+      <div className="flex gap-2 mb-4 flex-wrap">
+        <button
+          type="button"
+          onClick={() => setStatusFilter(null)}
+          className={`rounded-full px-3 min-h-9 text-sm border transition ${
+            statusFilter === null
+              ? "bg-accent text-white border-accent"
+              : "border-accent-soft hover:border-accent"
+          }`}
+        >
+          All ({orders.length})
+        </button>
+        {statuses
+          .filter((s) => statusCounts[s] > 0)
+          .map((s) => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => setStatusFilter(s)}
+              className={`rounded-full px-3 min-h-9 text-sm border capitalize transition ${
+                statusFilter === s
+                  ? "bg-accent text-white border-accent"
+                  : "border-accent-soft hover:border-accent"
+              }`}
+            >
+              {s.replace(/_/g, " ")} ({statusCounts[s]})
+            </button>
+          ))}
+      </div>
       <div className="space-y-3">
         {filtered.map((o) => {
           const client = o.clients;
@@ -281,7 +318,7 @@ export function AdminOrdersList({
         })}
         {filtered.length === 0 && (
           <p className="text-foreground/70">
-            {orders.length === 0 ? "No orders yet." : "No orders match your search."}
+            {orders.length === 0 ? "No orders yet." : "No orders match your search or filter."}
           </p>
         )}
       </div>

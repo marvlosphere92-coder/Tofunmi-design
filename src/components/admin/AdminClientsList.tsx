@@ -12,17 +12,30 @@ export function AdminClientsList({
   orderCounts: Record<string, number>;
 }) {
   const [search, setSearch] = useState("");
+  const [sort, setSort] = useState<"newest" | "name" | "most-orders">("newest");
+  const [onlyWithOrders, setOnlyWithOrders] = useState(false);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (!q) return clients;
-    return clients.filter(
+    let result = clients.filter(
       (c) =>
+        !q ||
         c.full_name.toLowerCase().includes(q) ||
         c.phone?.toLowerCase().includes(q) ||
         c.email?.toLowerCase().includes(q)
     );
-  }, [clients, search]);
+    if (onlyWithOrders) {
+      result = result.filter((c) => (orderCounts[c.id] ?? 0) > 0);
+    }
+    result = [...result];
+    if (sort === "name") {
+      result.sort((a, b) => a.full_name.localeCompare(b.full_name));
+    } else if (sort === "most-orders") {
+      result.sort((a, b) => (orderCounts[b.id] ?? 0) - (orderCounts[a.id] ?? 0));
+    }
+    // "newest" keeps the incoming order (already sorted by signup date).
+    return result;
+  }, [clients, search, sort, onlyWithOrders, orderCounts]);
 
   return (
     <div>
@@ -30,8 +43,30 @@ export function AdminClientsList({
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         placeholder="Search by name, phone, or email…"
-        className="w-full rounded-md border border-accent-soft px-3 py-2 mb-4"
+        className="w-full rounded-md border border-accent-soft px-3 py-2 mb-3"
       />
+      <div className="flex flex-wrap items-center gap-3 mb-4 text-sm">
+        <label className="text-foreground/70">
+          Sort by{" "}
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value as typeof sort)}
+            className="rounded-md border border-accent-soft px-2 py-1 ml-1"
+          >
+            <option value="newest">Newest first</option>
+            <option value="name">Name (A–Z)</option>
+            <option value="most-orders">Most orders</option>
+          </select>
+        </label>
+        <label className="flex items-center gap-1.5 text-foreground/70">
+          <input
+            type="checkbox"
+            checked={onlyWithOrders}
+            onChange={(e) => setOnlyWithOrders(e.target.checked)}
+          />
+          Only clients with orders
+        </label>
+      </div>
       <div className="space-y-2">
         {filtered.map((c) => (
           <Link
@@ -53,7 +88,7 @@ export function AdminClientsList({
         ))}
         {filtered.length === 0 && (
           <p className="text-foreground/70">
-            {clients.length === 0 ? "No clients yet." : "No clients match your search."}
+            {clients.length === 0 ? "No clients yet." : "No clients match your search or filter."}
           </p>
         )}
       </div>
