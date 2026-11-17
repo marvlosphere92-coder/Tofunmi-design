@@ -110,9 +110,16 @@ export function ChatThread({
     document.addEventListener("visibilitychange", onVisible);
     window.addEventListener("online", onOnline);
 
+    // Safety net: a dropped WebSocket doesn't always fire a status change
+    // (common on flaky mobile connections), which would otherwise leave
+    // this thread silently stale until something else happens to trigger
+    // a backfill.
+    const poll = setInterval(backfill, 10_000);
+
     return () => {
       document.removeEventListener("visibilitychange", onVisible);
       window.removeEventListener("online", onOnline);
+      clearInterval(poll);
       supabase.removeChannel(channel);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
