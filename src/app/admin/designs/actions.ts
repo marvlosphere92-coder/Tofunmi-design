@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createServiceClient } from "@/lib/supabase/server";
+import { videoThumbnailUrl } from "@/lib/cloudinary";
 
 async function nextReference(supabase: ReturnType<typeof createServiceClient>) {
   // Based on the highest existing reference number, not the row count —
@@ -53,7 +54,10 @@ export async function createDesign(formData: FormData) {
     description: String(formData.get("description") || "") || null,
     labour_price: formData.get("labourPrice") ? Number(formData.get("labourPrice")) : null,
     estimated_yards: formData.get("estimatedYards") ? Number(formData.get("estimatedYards")) : null,
-    cover_photo_url: photos[0] ?? null,
+    // Falls back to a frame grabbed from the video — otherwise a
+    // video-only design shows as an empty tile everywhere except its own
+    // detail page, where the video is the only thing that renders it.
+    cover_photo_url: photos[0] ?? (videos[0] ? videoThumbnailUrl(videos[0]) : null),
     photos,
     videos,
     active: !isDraft,
@@ -120,7 +124,7 @@ export async function updateDesign(formData: FormData) {
       description: String(formData.get("description") || "") || null,
       labour_price: formData.get("labourPrice") ? Number(formData.get("labourPrice")) : null,
       estimated_yards: formData.get("estimatedYards") ? Number(formData.get("estimatedYards")) : null,
-      cover_photo_url: photos[0] ?? null,
+      cover_photo_url: photos[0] ?? (videos[0] ? videoThumbnailUrl(videos[0]) : null),
       photos,
       videos,
     })
