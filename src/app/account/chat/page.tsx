@@ -3,6 +3,7 @@ import Link from "next/link";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { SiteNav, SiteFooter } from "@/components/SiteNav";
 import { ChatThread } from "@/components/ChatThread";
+import { fetchAllRows } from "@/lib/supabase/fetchAll";
 import { getSignedInClient } from "@/app/account/actions";
 import { sendClientChatMessage, markChatReadByClient, fetchClientChatSince } from "./actions";
 import type { ChatMessage, CapacitySettings } from "@/types/db";
@@ -16,12 +17,16 @@ export default async function AccountChatPage() {
   if (!clientId) redirect("/account");
 
   const service = createServiceClient();
-  const [{ data: messages }, { data: capacity }] = await Promise.all([
-    service
-      .from("chat_messages")
-      .select("*")
-      .eq("client_id", clientId)
-      .order("created_at", { ascending: true }),
+  const [messages, { data: capacity }] = await Promise.all([
+    // A long-running relationship can outgrow a single 1000-row page.
+    fetchAllRows<ChatMessage>((from, to) =>
+      service
+        .from("chat_messages")
+        .select("*")
+        .eq("client_id", clientId)
+        .order("created_at", { ascending: true })
+        .range(from, to)
+    ),
     service.from("capacity_settings").select("*").single(),
   ]);
   const receiptsEnabled = (capacity as CapacitySettings | null)?.chat_read_receipts_enabled ?? true;
@@ -37,7 +42,7 @@ export default async function AccountChatPage() {
         <ChatThread
           clientId={clientId}
           role="client"
-          initialMessages={(messages ?? []) as ChatMessage[]}
+          initialMessages={messages}
           otherPartyName="SimplyBukky"
           sendMessage={sendClientChatMessage}
           markRead={markChatReadByClient}

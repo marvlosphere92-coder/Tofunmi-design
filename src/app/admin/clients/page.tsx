@@ -1,17 +1,23 @@
 import { createClient } from "@/lib/supabase/server";
+import { fetchAllRows } from "@/lib/supabase/fetchAll";
 import { AdminClientsList } from "@/components/admin/AdminClientsList";
 import type { Client } from "@/types/db";
 
 export default async function AdminClientsPage() {
   const supabase = await createClient();
 
-  const [{ data: clients }, { data: orders }] = await Promise.all([
+  const [{ data: clients }, orders] = await Promise.all([
     supabase.from("clients").select("*").order("created_at", { ascending: false }),
-    supabase.from("orders").select("client_id"),
+    // Order counts shown per client — needs every order, not just the
+    // most recent 1000 site-wide.
+    fetchAllRows<{ client_id: string | null }>((from, to) =>
+      supabase.from("orders").select("client_id").range(from, to)
+    ),
   ]);
 
   const orderCounts: Record<string, number> = {};
-  for (const o of orders ?? []) {
+  for (const o of orders) {
+    if (!o.client_id) continue;
     orderCounts[o.client_id] = (orderCounts[o.client_id] ?? 0) + 1;
   }
 

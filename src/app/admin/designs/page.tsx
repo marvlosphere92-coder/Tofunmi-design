@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { fetchAllRows } from "@/lib/supabase/fetchAll";
 import { DesignMediaUploadField } from "@/components/DesignMediaUploadField";
 import { SubmitButton } from "@/components/SubmitButton";
 import { ConfirmDeleteForm } from "@/components/ConfirmDeleteForm";
@@ -9,14 +10,18 @@ import type { Design } from "@/types/db";
 
 export default async function AdminDesignsPage() {
   const supabase = await createClient();
-  const [{ data: designs }, { data: orders }] = await Promise.all([
+  const [{ data: designs }, orders] = await Promise.all([
     supabase.from("designs").select("*").order("display_order", { ascending: true }),
-    supabase.from("orders").select("design_id"),
+    // Feeds the "ordered N times" badge below — needs every order, not
+    // just the most recent 1000 site-wide.
+    fetchAllRows<{ design_id: string | null }>((from, to) =>
+      supabase.from("orders").select("design_id").range(from, to)
+    ),
   ]);
 
   const list = (designs ?? []) as Design[];
   const orderCounts: Record<string, number> = {};
-  for (const o of orders ?? []) {
+  for (const o of orders) {
     if (!o.design_id) continue;
     orderCounts[o.design_id] = (orderCounts[o.design_id] ?? 0) + 1;
   }

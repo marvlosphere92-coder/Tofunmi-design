@@ -1,20 +1,26 @@
 import { createClient } from "@/lib/supabase/server";
 import { AdminChatList } from "@/components/admin/AdminChatList";
 import { ReadReceiptsToggle } from "@/components/admin/ReadReceiptsToggle";
+import { fetchAllRows } from "@/lib/supabase/fetchAll";
 import { setChatReadReceiptsEnabled } from "./actions";
 import type { Client, ChatMessage, CapacitySettings } from "@/types/db";
 
 export default async function AdminChatPage() {
   const supabase = await createClient();
 
-  const [{ data: clients }, { data: messages }, { data: capacity }] = await Promise.all([
+  const [{ data: clients }, messages, { data: capacity }] = await Promise.all([
     supabase.from("clients").select("*").order("created_at", { ascending: false }),
-    supabase.from("chat_messages").select("*").order("created_at", { ascending: false }),
+    // Every client's last-message preview and unread count come from this
+    // one table-wide fetch, so it has to see every message, not just the
+    // most recent 1000 across the whole site.
+    fetchAllRows<ChatMessage>((from, to) =>
+      supabase.from("chat_messages").select("*").order("created_at", { ascending: false }).range(from, to)
+    ),
     supabase.from("capacity_settings").select("*").single(),
   ]);
   const receiptsEnabled = (capacity as CapacitySettings | null)?.chat_read_receipts_enabled ?? true;
 
-  const allMessages = (messages ?? []) as ChatMessage[];
+  const allMessages = messages;
   const lastMessageByClient = new Map<string, ChatMessage>();
   const unreadByClient = new Map<string, number>();
   for (const m of allMessages) {

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { updateCapacity } from "./actions";
 import { SubmitButton } from "@/components/SubmitButton";
+import { fetchAllRows } from "@/lib/supabase/fetchAll";
 import { ORDER_STATUS_LABELS } from "@/types/db";
 import type { CapacitySettings } from "@/types/db";
 
@@ -24,22 +25,23 @@ export default async function AdminDashboard() {
   startOfMonth.setDate(1);
   startOfMonth.setHours(0, 0, 0, 0);
 
-  const [
-    { data: capacity },
-    { count: pendingCount },
-    { count: waitlistCount },
-    { data: allOrders },
-  ] = await Promise.all([
-    supabase.from("capacity_settings").select("*").single(),
-    supabase.from("orders").select("*", { count: "exact", head: true }).eq("status", "requested"),
-    supabase.from("waitlist_entries").select("*", { count: "exact", head: true }).eq("contacted", false),
-    supabase
-      .from("orders")
-      .select("status, created_at, final_price, design_id, designs(title)"),
-  ]);
+  const [{ data: capacity }, { count: pendingCount }, { count: waitlistCount }, orders] =
+    await Promise.all([
+      supabase.from("capacity_settings").select("*").single(),
+      supabase.from("orders").select("*", { count: "exact", head: true }).eq("status", "requested"),
+      supabase.from("waitlist_entries").select("*", { count: "exact", head: true }).eq("contacted", false),
+      // Revenue and the status/design breakdowns below are totals over
+      // every order ever placed, so a plain .select() here would quietly
+      // understate them once orders pass this project's 1000-row cap.
+      fetchAllRows((from, to) =>
+        supabase
+          .from("orders")
+          .select("status, created_at, final_price, design_id, designs(title)")
+          .range(from, to)
+      ),
+    ]);
 
   const cap = capacity as CapacitySettings | null;
-  const orders = allOrders ?? [];
 
   const ordersThisMonth = orders.filter(
     (o) => new Date(o.created_at) >= startOfMonth

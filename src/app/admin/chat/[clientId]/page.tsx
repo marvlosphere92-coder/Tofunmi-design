@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { ChatThread } from "@/components/ChatThread";
+import { fetchAllRows } from "@/lib/supabase/fetchAll";
 import { sendAdminChatMessage, markChatReadByAdmin, fetchAdminChatSince } from "../actions";
 import type { Client, ChatMessage } from "@/types/db";
 
@@ -13,13 +14,17 @@ export default async function AdminChatThreadPage({
   const { clientId } = await params;
   const supabase = await createClient();
 
-  const [{ data: client }, { data: messages }] = await Promise.all([
+  const [{ data: client }, messages] = await Promise.all([
     supabase.from("clients").select("*").eq("id", clientId).single(),
-    supabase
-      .from("chat_messages")
-      .select("*")
-      .eq("client_id", clientId)
-      .order("created_at", { ascending: true }),
+    // A long-running relationship can outgrow a single 1000-row page.
+    fetchAllRows<ChatMessage>((from, to) =>
+      supabase
+        .from("chat_messages")
+        .select("*")
+        .eq("client_id", clientId)
+        .order("created_at", { ascending: true })
+        .range(from, to)
+    ),
   ]);
 
   if (!client) notFound();
@@ -35,7 +40,7 @@ export default async function AdminChatThreadPage({
       <ChatThread
         clientId={clientId}
         role="admin"
-        initialMessages={(messages ?? []) as ChatMessage[]}
+        initialMessages={messages}
         otherPartyName={c.full_name}
         sendMessage={sendAdminChatMessage.bind(null, clientId)}
         markRead={markChatReadByAdmin.bind(null, clientId)}
